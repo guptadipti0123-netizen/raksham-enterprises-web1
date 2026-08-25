@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   Building, 
@@ -8,19 +8,27 @@ import {
   Lock, 
   ArrowRight,
   ShieldCheck,
-  Phone
+  Phone,
+  CheckCircle2
 } from 'lucide-react';
 import { COMPANY_INFO } from '../data/websiteData';
 
 export default function LoginPage() {
   const { loginAsCustomer, loginAsAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [activeTab, setActiveTab] = useState('customer'); // 'customer' or 'admin'
-  const [identifier, setIdentifier] = useState('');
+  const [identifier, setIdentifier] = useState(() => location.state?.registeredId || location.state?.registeredPhone || '');
   const [password, setPassword] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState(() => {
+    if (location.state?.registeredId) {
+      return `Account registered successfully! Your Customer ID is ${location.state.registeredId}. Please login below.`;
+    }
+    return '';
+  });
 
   const handleCustomerLogin = (e) => {
     e.preventDefault();
@@ -107,6 +115,13 @@ export default function LoginPage() {
         {/* Form Body */}
         <div className="p-6 space-y-4">
           
+          {successMessage && (
+            <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center space-x-2 animate-fadeIn">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+              <span>{successMessage}</span>
+            </div>
+          )}
+
           {errorMessage && (
             <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium text-center animate-fadeIn">
               {errorMessage}

@@ -117,11 +117,11 @@ export default function RegisterPage() {
 
               <button
                 type="button"
-                onClick={handleProceedToDashboard}
+                onClick={() => navigate('/login', { state: { registeredId: registeredCust.customerNo, registeredPhone: registeredCust.contactPhone } })}
                 className="w-full py-3.5 rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-bold text-xs shadow-gold-soft transition-all flex items-center justify-center space-x-2"
               >
-                <span>Enter Customer Dashboard Now</span>
-                <ArrowRight className="w-4 h-4" />
+                <KeyRound className="w-4 h-4" />
+                <span>Proceed to Login Page →</span>
               </button>
             </div>
           ) : (

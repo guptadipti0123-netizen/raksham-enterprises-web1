@@ -330,8 +330,6 @@ export function AuthProvider({ children }) {
     const updated = [newCust, ...customers];
     setCustomers(updated);
     localStorage.setItem('raksham_customers', JSON.stringify(updated));
-    setActiveCustomer(newCust);
-    setUserRole('customer');
     return newCust;
   };
 
