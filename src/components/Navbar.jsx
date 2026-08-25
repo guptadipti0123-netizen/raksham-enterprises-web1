@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { COMPANY_INFO, SERVICES } from '../data/websiteData';
-import { useAuth } from '../context/AuthContext';
 import { 
   Phone, 
   MessageSquare, 
@@ -9,37 +7,40 @@ import {
   X, 
   ChevronDown, 
   ShieldCheck, 
-  UserCheck, 
-  KeyRound, 
-  ArrowRight, 
-  User,
+  User, 
+  Lock, 
+  Wrench, 
+  ArrowRight,
   Sparkles,
-  Wrench
+  KeyRound,
+  UserCheck,
+  MapPin
 } from 'lucide-react';
+import { COMPANY_INFO, SERVICES, MUMBAI_LOCATIONS } from '../data/websiteData';
+import { useAuth } from '../context/AuthContext';
 import IconRenderer from './IconRenderer';
 
 export default function Navbar({ onOpenQuote }) {
-  const { userRole, activeCustomer } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const dropdownRef = useRef(null);
   const location = useLocation();
+  const { userRole, activeCustomer } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 15);
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    setIsMobileMenuOpen(false);
-    setIsServicesOpen(false);
-  }, [location.pathname]);
-
-  // Click outside listener for dropdown
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -50,13 +51,13 @@ export default function Navbar({ onOpenQuote }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Main Desktop Navigation Links (Service Areas moved inside Services Submenu)
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about-us' },
     { name: 'Services', path: '/services', hasDropdown: true },
     { name: 'CCTV AMC', path: '/cctv-amc-mumbai' },
     { name: 'Projects', path: '/projects' },
-    { name: 'Service Areas', path: '/service-areas' },
     { name: 'Blog', path: '/blog' },
     { name: 'FAQ', path: '/faq' },
     { name: 'Contact', path: '/contact' },
@@ -84,6 +85,13 @@ export default function Navbar({ onOpenQuote }) {
           </div>
 
           <div className="flex items-center space-x-3">
+            <Link 
+              to="/service-areas" 
+              className="text-slate-300 hover:text-gold-400 font-semibold transition-colors flex items-center space-x-1"
+            >
+              <span>📍 Service Areas</span>
+            </Link>
+            <span className="text-slate-700">|</span>
             <Link 
               to="/track-service" 
               className="text-slate-300 hover:text-gold-400 font-semibold transition-colors flex items-center space-x-1"
@@ -121,9 +129,9 @@ export default function Navbar({ onOpenQuote }) {
           : 'bg-white border-b border-slate-100 py-3'
       }`}>
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-3">
             
-            {/* Brand Logo (Always protected with flex-shrink-0) */}
+            {/* Brand Logo */}
             <Link to="/" className="flex items-center space-x-2.5 flex-shrink-0 group">
               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden bg-white border border-slate-200 p-0.5 flex items-center justify-center shadow-xs group-hover:border-gold-500 transition-colors flex-shrink-0">
                 <img 
@@ -142,8 +150,8 @@ export default function Navbar({ onOpenQuote }) {
               </div>
             </Link>
 
-            {/* Desktop Navigation Links (Single Straight Line with whitespace-nowrap) */}
-            <div className="hidden lg:flex items-center space-x-0.5 xl:space-x-1 flex-shrink-0">
+            {/* Desktop Navigation Links */}
+            <div className="hidden lg:flex items-center space-x-1 xl:space-x-2 flex-shrink-0">
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.path || (link.path !== '/' && location.pathname.startsWith(link.path));
                 
@@ -152,60 +160,98 @@ export default function Navbar({ onOpenQuote }) {
                     <div 
                       key={link.name} 
                       ref={dropdownRef}
-                      className="relative"
+                      className="relative group/nav"
                       onMouseEnter={() => setIsServicesOpen(true)}
                       onMouseLeave={() => setIsServicesOpen(false)}
                     >
-                      <button
-                        type="button"
-                        onClick={() => setIsServicesOpen(!isServicesOpen)}
-                        className={`px-2 xl:px-2.5 py-1.5 text-[12px] xl:text-[13px] font-bold rounded-lg transition-all flex items-center space-x-1 whitespace-nowrap ${
-                          isActive 
-                            ? 'text-gold-700 bg-gold-50' 
-                            : 'text-slate-700 hover:text-gold-700 hover:bg-slate-50'
-                        }`}
-                      >
-                        <span>{link.name}</span>
-                        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isServicesOpen ? 'rotate-180 text-gold-600' : 'text-slate-400'}`} />
-                      </button>
+                      <div className="flex items-center">
+                        <Link
+                          to={link.path}
+                          className={`pl-2.5 pr-1 py-1.5 text-[13px] font-bold rounded-l-lg transition-all whitespace-nowrap ${
+                            isActive 
+                              ? 'text-gold-700 bg-gold-50' 
+                              : 'text-slate-700 hover:text-gold-700 hover:bg-slate-50'
+                          }`}
+                        >
+                          {link.name}
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => setIsServicesOpen(!isServicesOpen)}
+                          className={`pr-2 py-1.5 text-[13px] rounded-r-lg transition-all flex items-center ${
+                            isActive 
+                              ? 'text-gold-700 bg-gold-50' 
+                              : 'text-slate-700 hover:text-gold-700 hover:bg-slate-50'
+                          }`}
+                          aria-label="Toggle services menu"
+                        >
+                          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isServicesOpen ? 'rotate-180 text-gold-600' : 'text-slate-400'}`} />
+                        </button>
+                      </div>
 
-                      {/* Dropdown Menu */}
+                      {/* Dropdown Menu (Includes 12 Services + Service Areas Submenu) */}
                       {isServicesOpen && (
-                        <div className="absolute top-full left-0 w-[580px] bg-white border border-slate-200 rounded-2xl shadow-xl p-4 transition-all duration-200 grid grid-cols-2 gap-2 z-50 animate-fadeIn mt-1">
-                          <div className="col-span-2 pb-2 mb-1 border-b border-slate-100 flex justify-between items-center px-1">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-                              Our 12 Security Services
-                            </span>
+                        <div className="absolute top-full left-0 w-[620px] bg-white border border-slate-200 rounded-2xl shadow-xl p-4 transition-all duration-200 z-50 animate-fadeIn mt-1">
+                          
+                          {/* Top Sub-Bar with Direct Page Links */}
+                          <div className="pb-3 mb-2 border-b border-slate-100 flex items-center justify-between px-1">
                             <Link 
                               to="/services" 
                               onClick={() => setIsServicesOpen(false)}
-                              className="text-xs text-gold-700 font-bold hover:underline flex items-center space-x-1"
+                              className="text-xs text-gold-700 hover:text-gold-800 font-extrabold flex items-center space-x-1"
                             >
-                              <span>View All Services</span>
+                              <span>🛠️ View All 12 Services Page</span>
                               <ArrowRight className="w-3 h-3" />
+                            </Link>
+
+                            <Link 
+                              to="/service-areas" 
+                              onClick={() => setIsServicesOpen(false)}
+                              className="text-xs text-slate-800 hover:text-gold-700 font-bold bg-gold-50 hover:bg-gold-100 px-2.5 py-1 rounded-lg border border-gold-200 flex items-center space-x-1 transition-colors"
+                            >
+                              <span>📍 Mumbai Service Areas (14 Hubs)</span>
+                              <ArrowRight className="w-3 h-3 text-gold-600" />
                             </Link>
                           </div>
 
-                          {SERVICES.map((service) => (
+                          {/* 12 Services Grid */}
+                          <div className="grid grid-cols-2 gap-2">
+                            {SERVICES.map((service) => (
+                              <Link
+                                key={service.id}
+                                to={`/services/${service.id}`}
+                                onClick={() => setIsServicesOpen(false)}
+                                className="flex items-start space-x-2.5 p-2 rounded-xl hover:bg-gold-50/70 border border-transparent hover:border-gold-200 transition-all text-left group/item"
+                              >
+                                <div className="p-1.5 rounded-lg bg-slate-100 text-slate-700 group-hover/item:bg-gold-500 group-hover/item:text-white transition-colors flex-shrink-0 mt-0.5">
+                                  <IconRenderer name={service.icon} className="w-4 h-4" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-xs font-bold text-slate-800 group-hover/item:text-gold-700 transition-colors truncate">
+                                    {service.title}
+                                  </p>
+                                  <p className="text-[10px] text-slate-500 line-clamp-1 leading-tight mt-0.5">
+                                    {service.shortDesc}
+                                  </p>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+
+                          {/* Bottom Area Quick Link Banner */}
+                          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs px-2 bg-slate-50 p-2 rounded-xl">
+                            <span className="text-[11px] text-slate-600 font-medium">
+                              Covering Chembur, Ghatkopar, Sakinaka, Andheri, Navi Mumbai & more
+                            </span>
                             <Link
-                              key={service.id}
-                              to={`/services/${service.id}`}
+                              to="/service-areas"
                               onClick={() => setIsServicesOpen(false)}
-                              className="flex items-start space-x-2.5 p-2 rounded-xl hover:bg-gold-50/70 border border-transparent hover:border-gold-200 transition-all text-left group/item"
+                              className="font-bold text-gold-700 hover:underline flex items-center space-x-1"
                             >
-                              <div className="p-1.5 rounded-lg bg-slate-100 text-slate-700 group-hover/item:bg-gold-500 group-hover/item:text-white transition-colors flex-shrink-0 mt-0.5">
-                                <IconRenderer name={service.icon} className="w-4 h-4" />
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="text-xs font-bold text-slate-800 group-hover/item:text-gold-700 transition-colors truncate">
-                                  {service.title}
-                                </p>
-                                <p className="text-[10px] text-slate-500 line-clamp-1 leading-tight mt-0.5">
-                                  {service.shortDesc}
-                                </p>
-                              </div>
+                              <span>Explore Locations →</span>
                             </Link>
-                          ))}
+                          </div>
+
                         </div>
                       )}
                     </div>
@@ -216,7 +262,7 @@ export default function Navbar({ onOpenQuote }) {
                   <Link
                     key={link.name}
                     to={link.path}
-                    className={`px-2 xl:px-2.5 py-1.5 text-[12px] xl:text-[13px] font-bold rounded-lg transition-all whitespace-nowrap ${
+                    className={`px-2.5 xl:px-3 py-1.5 text-[13px] font-bold rounded-lg transition-all whitespace-nowrap ${
                       isActive 
                         ? 'text-gold-700 bg-gold-50' 
                         : 'text-slate-700 hover:text-gold-700 hover:bg-slate-50'
@@ -229,10 +275,10 @@ export default function Navbar({ onOpenQuote }) {
             </div>
 
             {/* Right Header Action Buttons (Desktop) */}
-            <div className="hidden lg:flex items-center space-x-1.5 xl:space-x-2 flex-shrink-0">
+            <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
               <Link
                 to="/service-request"
-                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-gold-50 hover:bg-gold-100 text-gold-900 border border-gold-300 text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gold-50 hover:bg-gold-100 text-gold-900 border border-gold-300 text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
               >
                 <Wrench className="w-3.5 h-3.5 text-gold-700 flex-shrink-0" />
                 <span>Need Service?</span>
@@ -240,7 +286,7 @@ export default function Navbar({ onOpenQuote }) {
 
               <Link
                 to={userRole ? (userRole === 'admin' ? '/admin/dashboard' : '/customer/dashboard') : '/login'}
-                className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
               >
                 <User className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
                 <span>{userRole ? (userRole === 'admin' ? 'Admin' : 'Portal') : 'Login'}</span>
@@ -248,13 +294,13 @@ export default function Navbar({ onOpenQuote }) {
 
               <button
                 onClick={onOpenQuote}
-                className="px-3.5 py-1.5 rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-bold text-xs shadow-gold-soft hover:shadow-gold-hover transition-all whitespace-nowrap"
+                className="px-4 py-2 rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-bold text-xs shadow-gold-soft hover:shadow-gold-hover transition-all whitespace-nowrap flex-shrink-0"
               >
                 Get Free Quote
               </button>
             </div>
 
-            {/* Mobile Header Right Controls (Clean, Compact & Never Overflows) */}
+            {/* Mobile Header Right Controls */}
             <div className="flex items-center space-x-1.5 sm:space-x-2 lg:hidden flex-shrink-0">
               <Link
                 to="/service-request"
@@ -303,6 +349,15 @@ export default function Navbar({ onOpenQuote }) {
                   </Link>
                 );
               })}
+
+              <Link
+                to="/service-areas"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center space-x-2"
+              >
+                <MapPin className="w-4 h-4 text-gold-600" />
+                <span>Mumbai Service Areas (14 Locations)</span>
+              </Link>
               
               <Link
                 to="/service-request"
