@@ -63,17 +63,26 @@ export default function HomePage({ onOpenQuote }) {
   return (
     <div className="bg-white">
       
-      {/* 1. HERO SECTION (Clean, Modern & Punchy) */}
-      <section className="relative pt-24 pb-14 sm:pt-36 sm:pb-24 md:pt-40 md:pb-28 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white overflow-hidden">
+      {/* 1. HERO SECTION (Clean, Modern & High-Tech Security Backdrop) */}
+      <section className="relative pt-24 pb-14 sm:pt-36 sm:pb-24 md:pt-40 md:pb-28 bg-slate-950 text-white overflow-hidden">
+        
+        {/* Modern High-Tech Security Matrix Grid */}
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20 mix-blend-luminosity pointer-events-none"
+          className="absolute inset-0 pointer-events-none opacity-40"
           style={{
-            backgroundImage: `url('/assets/logo-full.jpg')`,
-            backgroundPosition: 'center',
-            backgroundSize: 'cover'
+            backgroundImage: `radial-gradient(rgba(217, 178, 86, 0.18) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px)`,
+            backgroundSize: '32px 32px, 16px 16px',
+            backgroundPosition: '0 0, 8px 8px'
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/90 to-slate-950/80 pointer-events-none" />
+
+        {/* Dynamic Ambient Glow Gradients (Deep Gold & Security Blue) */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 bg-gold-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 -right-32 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-gold-500/10 rounded-full blur-2xl pointer-events-none" />
+
+        {/* Subtle Tech Circuit Scan Lines */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/50 to-slate-950 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
