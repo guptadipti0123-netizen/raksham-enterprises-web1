@@ -123,21 +123,21 @@ export default function Navbar({ onOpenQuote }) {
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
           <div className="flex items-center justify-between gap-2">
             
-            {/* Brand Logo */}
-            <Link to="/" className="flex items-center space-x-2 sm:space-x-2.5 flex-shrink group min-w-0">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden bg-white border border-slate-200 p-0.5 flex items-center justify-center shadow-xs group-hover:border-gold-500 transition-colors flex-shrink-0">
+            {/* Brand Logo (Always protected with flex-shrink-0) */}
+            <Link to="/" className="flex items-center space-x-2.5 flex-shrink-0 group">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden bg-white border border-slate-200 p-0.5 flex items-center justify-center shadow-xs group-hover:border-gold-500 transition-colors flex-shrink-0">
                 <img 
                   src="/assets/logo-icon.jpg" 
                   alt="Raksham Enterprises Logo Icon" 
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex flex-col text-left min-w-0">
-                <span className="text-xs sm:text-base md:text-lg font-extrabold tracking-tight text-slate-900 leading-none group-hover:text-gold-700 transition-colors whitespace-nowrap">
-                  <span className="text-gold-600 font-black">RAKSHAM</span> ENTERPRISES
+              <div className="flex flex-col text-left flex-shrink-0">
+                <span className="text-sm sm:text-base md:text-lg font-black tracking-tight text-slate-900 leading-none group-hover:text-gold-700 transition-colors whitespace-nowrap">
+                  <span className="text-gold-600">RAKSHAM</span> ENTERPRISES
                 </span>
-                <span className="text-[8px] sm:text-[9px] uppercase tracking-wider text-slate-500 font-semibold mt-0.5 whitespace-nowrap truncate">
-                  Security Solutions • Mumbai
+                <span className="text-[8px] sm:text-[9px] uppercase tracking-wider text-slate-500 font-semibold mt-0.5 whitespace-nowrap">
+                  Security System Solutions • Mumbai
                 </span>
               </div>
             </Link>
@@ -159,7 +159,7 @@ export default function Navbar({ onOpenQuote }) {
                       <button
                         type="button"
                         onClick={() => setIsServicesOpen(!isServicesOpen)}
-                        className={`px-2.5 xl:px-3 py-2 text-[13px] font-bold rounded-lg transition-all flex items-center space-x-1 whitespace-nowrap ${
+                        className={`px-2 xl:px-2.5 py-1.5 text-[12px] xl:text-[13px] font-bold rounded-lg transition-all flex items-center space-x-1 whitespace-nowrap ${
                           isActive 
                             ? 'text-gold-700 bg-gold-50' 
                             : 'text-slate-700 hover:text-gold-700 hover:bg-slate-50'
@@ -216,7 +216,7 @@ export default function Navbar({ onOpenQuote }) {
                   <Link
                     key={link.name}
                     to={link.path}
-                    className={`px-2.5 xl:px-3 py-2 text-[13px] font-bold rounded-lg transition-all whitespace-nowrap ${
+                    className={`px-2 xl:px-2.5 py-1.5 text-[12px] xl:text-[13px] font-bold rounded-lg transition-all whitespace-nowrap ${
                       isActive 
                         ? 'text-gold-700 bg-gold-50' 
                         : 'text-slate-700 hover:text-gold-700 hover:bg-slate-50'
@@ -229,10 +229,10 @@ export default function Navbar({ onOpenQuote }) {
             </div>
 
             {/* Right Header Action Buttons (Desktop) */}
-            <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
+            <div className="hidden lg:flex items-center space-x-1.5 xl:space-x-2 flex-shrink-0">
               <Link
                 to="/service-request"
-                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gold-50 hover:bg-gold-100 text-gold-900 border border-gold-300 text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
+                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-gold-50 hover:bg-gold-100 text-gold-900 border border-gold-300 text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
               >
                 <Wrench className="w-3.5 h-3.5 text-gold-700 flex-shrink-0" />
                 <span>Need Service?</span>
@@ -240,7 +240,7 @@ export default function Navbar({ onOpenQuote }) {
 
               <Link
                 to={userRole ? (userRole === 'admin' ? '/admin/dashboard' : '/customer/dashboard') : '/login'}
-                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
+                className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
               >
                 <User className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
                 <span>{userRole ? (userRole === 'admin' ? 'Admin' : 'Portal') : 'Login'}</span>
@@ -248,7 +248,7 @@ export default function Navbar({ onOpenQuote }) {
 
               <button
                 onClick={onOpenQuote}
-                className="px-4 py-2 rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-bold text-xs shadow-gold-soft hover:shadow-gold-hover transition-all whitespace-nowrap"
+                className="px-3.5 py-1.5 rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-bold text-xs shadow-gold-soft hover:shadow-gold-hover transition-all whitespace-nowrap"
               >
                 Get Free Quote
               </button>
