@@ -76,7 +76,7 @@ export default function HomePage({ onOpenQuote }) {
     <div className="bg-white">
       
       {/* 3. HERO SECTION */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white overflow-hidden">
+      <section className="relative pt-24 pb-14 sm:pt-36 sm:pb-24 md:pt-40 md:pb-28 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white overflow-hidden">
         
         {/* Subtle Background Security Imagery & Overlay */}
         <div 
@@ -90,30 +90,30 @@ export default function HomePage({ onOpenQuote }) {
         <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-900/90 to-slate-950/80 pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             {/* Left Content */}
-            <div className="lg:col-span-8 space-y-6 text-center lg:text-left">
+            <div className="lg:col-span-8 space-y-4 sm:space-y-6 text-center lg:text-left">
               
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-xs font-semibold uppercase tracking-wider">
-                <ShieldCheck className="w-4 h-4 text-gold-400" />
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+                <ShieldCheck className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
                 <span>Security System Solution Provider – Mumbai</span>
               </div>
 
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
-                CCTV & Security System <br />
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                CCTV & Security System <br className="hidden sm:block" />
                 <span className="text-gradient-gold">Solutions in Mumbai</span>
               </h1>
 
-              <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              <p className="text-xs sm:text-base md:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
                 {COMPANY_INFO.heroSubheading}
               </p>
 
               {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
                 <button
                   onClick={onOpenQuote}
-                  className="w-full sm:w-auto px-8 py-4 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold text-sm shadow-gold-soft transition-all flex items-center justify-center space-x-2"
+                  className="w-full sm:w-auto px-7 py-3.5 sm:py-4 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold text-xs sm:text-sm shadow-gold-soft transition-all flex items-center justify-center space-x-2"
                 >
                   <span>Get Free Consultation</span>
                   <ArrowRight className="w-4 h-4" />
@@ -121,7 +121,7 @@ export default function HomePage({ onOpenQuote }) {
 
                 <Link
                   to="/services"
-                  className="w-full sm:w-auto px-7 py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm shadow-xs transition-all flex items-center justify-center space-x-2 border border-slate-700"
+                  className="w-full sm:w-auto px-6 py-3.5 sm:py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center space-x-2 border border-slate-700"
                 >
                   <span>Explore 12 Services</span>
                 </Link>

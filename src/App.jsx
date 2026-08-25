@@ -125,9 +125,6 @@ export default function App() {
           {/* Footer */}
           <Footer onOpenQuote={handleOpenQuote} />
 
-          {/* Mobile Bottom Fixed Action Bar */}
-          <MobileStickyBar onOpenQuote={handleOpenQuote} />
-
           {/* Quick Quote Modal */}
           <QuoteModal
             isOpen={isQuoteModalOpen}
