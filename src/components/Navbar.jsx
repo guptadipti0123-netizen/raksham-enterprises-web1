@@ -51,7 +51,7 @@ export default function Navbar({ onOpenQuote }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Main Desktop Navigation Links (Service Areas moved inside Services Submenu)
+  // Main Desktop Navigation Links (Clean & Concise)
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'About Us', path: '/about-us' },
@@ -59,7 +59,6 @@ export default function Navbar({ onOpenQuote }) {
     { name: 'CCTV AMC', path: '/cctv-amc-mumbai' },
     { name: 'Projects', path: '/projects' },
     { name: 'Blog', path: '/blog' },
-    { name: 'FAQ', path: '/faq' },
     { name: 'Contact', path: '/contact' },
   ];
 

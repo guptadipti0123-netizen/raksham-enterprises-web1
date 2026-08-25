@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
-import { COMPANY_INFO, SERVICES } from '../data/websiteData';
-import { Phone, MessageSquare, Mail, MapPin, Send, CheckCircle2, Clock, ShieldCheck } from 'lucide-react';
+import { COMPANY_INFO, SERVICES, FAQS } from '../data/websiteData';
+import { 
+  Phone, 
+  MessageSquare, 
+  Mail, 
+  MapPin, 
+  Send, 
+  CheckCircle2, 
+  Clock, 
+  ShieldCheck, 
+  ChevronDown, 
+  HelpCircle 
+} from 'lucide-react';
 
 export default function ContactPage() {
+  const [openFaqIdx, setOpenFaqIdx] = useState(0);
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -285,6 +297,63 @@ export default function ContactPage() {
             </div>
 
           </div>
+        </div>
+      </section>
+
+      {/* Embedded FAQs Accordion Section */}
+      <section className="py-16 bg-slate-50 border-t border-slate-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          
+          <div className="text-center space-y-2">
+            <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-50 border border-gold-200 text-gold-800 text-xs font-semibold">
+              <HelpCircle className="w-3.5 h-3.5 text-gold-600" />
+              <span>Got Questions?</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Frequently Asked Questions (FAQs)
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto">
+              Clear answers regarding CCTV installation costs, AMC contracts, warranty, and technician visits in Mumbai.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {FAQS.map((faq, idx) => {
+              const isOpen = openFaqIdx === idx;
+              return (
+                <div
+                  key={idx}
+                  className={`rounded-2xl transition-all border overflow-hidden ${
+                    isOpen
+                      ? 'bg-white border-gold-400 shadow-soft'
+                      : 'bg-white border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  <button
+                    onClick={() => setOpenFaqIdx(isOpen ? -1 : idx)}
+                    className="w-full p-4 sm:p-5 text-left flex items-center justify-between space-x-4 focus:outline-none"
+                  >
+                    <span className="text-xs sm:text-sm font-bold text-slate-900 flex items-center space-x-2.5">
+                      <span className="text-gold-700 font-mono text-xs font-black">Q{idx + 1}.</span>
+                      <span>{faq.q}</span>
+                    </span>
+                    <div className={`p-1.5 rounded-lg transition-transform duration-200 flex-shrink-0 ${
+                      isOpen ? 'rotate-180 bg-gold-500 text-white' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      <ChevronDown className="w-3.5 h-3.5" />
+                    </div>
+                  </button>
+
+                  {isOpen && (
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-0 text-xs text-slate-600 leading-relaxed border-t border-slate-100 mt-1">
+                      <p className="pt-2">{faq.a}</p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
         </div>
       </section>
 
