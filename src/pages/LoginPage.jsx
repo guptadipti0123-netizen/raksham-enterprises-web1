@@ -143,13 +143,22 @@ export default function LoginPage() {
                 <ArrowRight className="w-4 h-4" />
               </button>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-                <a href={`tel:${COMPANY_INFO.phoneRaw}`} className="hover:text-gold-700 font-medium">
-                  Need Help? Call Support
-                </a>
-                <Link to="/track-service" className="text-gold-700 font-bold hover:underline">
-                  Track One-Time Repair →
-                </Link>
+              <div className="pt-3 border-t border-slate-100 space-y-2 text-[11px] text-slate-500">
+                <div className="p-2.5 rounded-xl bg-gold-50/70 border border-gold-200 text-center">
+                  <span className="text-slate-600">New Client or Society? </span>
+                  <Link to="/register" className="text-gold-800 font-bold hover:underline">
+                    Register Account & Get Customer ID →
+                  </Link>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <a href={`tel:${COMPANY_INFO.phoneRaw}`} className="hover:text-gold-700 font-medium">
+                    Need Help? Call Support
+                  </a>
+                  <Link to="/track-service" className="text-gold-700 font-bold hover:underline">
+                    Track One-Time Repair →
+                  </Link>
+                </div>
               </div>
             </form>
           ) : (

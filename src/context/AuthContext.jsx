@@ -306,6 +306,35 @@ export function AuthProvider({ children }) {
     return newRep;
   };
 
+  const registerCustomer = (data) => {
+    const locPrefix = (data.location || 'MUM').slice(0, 3).toUpperCase();
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    const newCustomerNo = `${locPrefix}${rand}`;
+
+    const newCust = {
+      id: `CUST-${Date.now().toString().slice(-4)}`,
+      customerNo: newCustomerNo,
+      name: data.societyName || data.name || 'New Client',
+      contactPerson: data.contactPerson || data.name || 'Manager',
+      contactPhone: data.mobile || data.phone || 'N/A',
+      email: data.email || 'customer@raksham.com',
+      address: data.address || `${data.location || 'Mumbai'}, Maharashtra`,
+      amcStatus: data.amcRequired ? 'Active' : 'Registered',
+      amcType: data.amcPlan || 'Comprehensive Shield AMC',
+      amcExpiry: '2027-08-25',
+      camerasCount: parseInt(data.camerasCount) || 8,
+      nvrDetails: 'Hikvision / CP Plus NVR 16CH',
+      hdds: '4TB Surveillance HDD'
+    };
+
+    const updated = [newCust, ...customers];
+    setCustomers(updated);
+    localStorage.setItem('raksham_customers', JSON.stringify(updated));
+    setActiveCustomer(newCust);
+    setUserRole('customer');
+    return newCust;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -319,6 +348,7 @@ export function AuthProvider({ children }) {
         equipment,
         feedbacks,
         loginAsCustomer,
+        registerCustomer,
         loginAsAdmin,
         logout,
         addEnquiry,

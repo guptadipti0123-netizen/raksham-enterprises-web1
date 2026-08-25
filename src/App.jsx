@@ -24,6 +24,7 @@ import ServiceReportPage from './pages/ServiceReportPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import ServiceIntakePage from './pages/ServiceIntakePage';
 import NonAmcBookingPage from './pages/NonAmcBookingPage';
 import ServiceTrackingPage from './pages/ServiceTrackingPage';
@@ -94,6 +95,7 @@ export default function App() {
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               <Route path="/terms-and-conditions" element={<TermsPage />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
 
               {/* Customer Portal Nested Routes */}
               <Route path="/customer" element={<CustomerLayout />}>
