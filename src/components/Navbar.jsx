@@ -275,18 +275,10 @@ export default function Navbar({ onOpenQuote }) {
             </div>
 
             {/* Right Header Action Buttons (Desktop) */}
-            <div className="hidden lg:flex items-center space-x-2 flex-shrink-0">
-              <Link
-                to="/service-request"
-                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-gold-50 hover:bg-gold-100 text-gold-900 border border-gold-300 text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
-              >
-                <Wrench className="w-3.5 h-3.5 text-gold-700 flex-shrink-0" />
-                <span>Need Service?</span>
-              </Link>
-
+            <div className="hidden lg:flex items-center space-x-2.5 flex-shrink-0">
               <Link
                 to={userRole ? (userRole === 'admin' ? '/admin/dashboard' : '/customer/dashboard') : '/login'}
-                className="flex items-center space-x-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
+                className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all whitespace-nowrap shadow-2xs"
               >
                 <User className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
                 <span>{userRole ? (userRole === 'admin' ? 'Admin' : 'Portal') : 'Login'}</span>
@@ -301,20 +293,12 @@ export default function Navbar({ onOpenQuote }) {
             </div>
 
             {/* Mobile Header Right Controls */}
-            <div className="flex items-center space-x-1.5 sm:space-x-2 lg:hidden flex-shrink-0">
-              <Link
-                to="/service-request"
-                className="px-2.5 py-1.5 rounded-lg bg-gold-50 border border-gold-300 text-gold-900 text-[11px] sm:text-xs font-bold flex items-center space-x-1 shadow-2xs"
-              >
-                <Wrench className="w-3 h-3 text-gold-700" />
-                <span>Service</span>
-              </Link>
-
+            <div className="flex items-center space-x-2 lg:hidden flex-shrink-0">
               <Link
                 to={userRole ? (userRole === 'admin' ? '/admin/dashboard' : '/customer/dashboard') : '/login'}
-                className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-[11px] sm:text-xs font-bold flex items-center space-x-1 shadow-2xs"
+                className="px-2.5 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-bold flex items-center space-x-1 shadow-2xs"
               >
-                <User className="w-3 h-3 text-gold-400" />
+                <User className="w-3.5 h-3.5 text-gold-400" />
                 <span>{userRole ? 'Portal' : 'Login'}</span>
               </Link>
               
