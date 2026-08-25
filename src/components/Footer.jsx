@@ -20,43 +20,7 @@ export default function Footer({ onOpenQuote }) {
     <footer className="bg-slate-900 text-slate-400 pt-16 pb-16 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
-        {/* 1. TOP FOOTER PROMINENT CALLOUT: Need Service & Complaint Routing Hub */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-slate-800/90 border border-slate-700 grid grid-cols-1 lg:grid-cols-12 gap-6 items-center shadow-lg relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="lg:col-span-7 space-y-2 relative z-10">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-xs font-semibold">
-              <Wrench className="w-3.5 h-3.5 text-gold-400" />
-              <span>Raksham Service & Repair Command Desk</span>
-            </div>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-white">
-              Need CCTV Service, Repair or Maintenance?
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Instant service intake for AMC priority tickets, on-demand ₹800 non-AMC repairs, and live complaint tracking across Mumbai.
-            </p>
-          </div>
-
-          <div className="lg:col-span-5 flex flex-wrap gap-2.5 sm:justify-end relative z-10">
-            <Link
-              to="/service-request"
-              className="px-5 py-3 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold text-xs shadow-gold-soft transition-all flex items-center space-x-1.5"
-            >
-              <Wrench className="w-3.5 h-3.5" />
-              <span>Need Service? (Book Now)</span>
-            </Link>
-
-            <Link
-              to="/track-service"
-              className="px-4 py-3 rounded-xl bg-slate-700/90 hover:bg-slate-700 text-white font-semibold text-xs border border-slate-600 transition-colors flex items-center space-x-1.5"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-gold-400" />
-              <span>Track Complaint</span>
-            </Link>
-          </div>
-        </div>
-
-        {/* 2. Main 4-Column Grid */}
+        {/* Main 4-Column Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           
           {/* Column 1: Brand & Bio */}
