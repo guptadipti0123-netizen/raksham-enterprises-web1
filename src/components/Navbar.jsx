@@ -65,7 +65,7 @@ export default function Navbar({ onOpenQuote }) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
       
-      {/* 1. Top Mini Bar (Contact & Portal) */}
+      {/* 1. Top Mini Bar (Clean Company Contact Info) */}
       <div className="bg-slate-900 text-slate-300 text-[11px] py-1.5 px-4 hidden lg:block border-b border-slate-800">
         <div className="max-w-[1440px] mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
@@ -83,21 +83,7 @@ export default function Navbar({ onOpenQuote }) {
             </a>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <Link 
-              to="/service-areas" 
-              className="text-slate-300 hover:text-gold-400 font-semibold transition-colors flex items-center space-x-1"
-            >
-              <span>📍 Service Areas</span>
-            </Link>
-            <span className="text-slate-700">|</span>
-            <Link 
-              to="/track-service" 
-              className="text-slate-300 hover:text-gold-400 font-semibold transition-colors flex items-center space-x-1"
-            >
-              <span>🔍 Track Service</span>
-            </Link>
-            <span className="text-slate-700">|</span>
+          <div className="flex items-center space-x-3 text-slate-400 text-[11px]">
             {userRole ? (
               <Link 
                 to={userRole === 'admin' ? '/admin/dashboard' : '/customer/dashboard'}
@@ -109,13 +95,7 @@ export default function Navbar({ onOpenQuote }) {
                 </span>
               </Link>
             ) : (
-              <Link 
-                to="/login"
-                className="flex items-center space-x-1.5 text-gold-400 hover:text-gold-300 font-semibold bg-slate-800 px-2.5 py-0.5 rounded border border-gold-500/30 transition-colors"
-              >
-                <KeyRound className="w-3 h-3" />
-                <span>Customer & Admin Login</span>
-              </Link>
+              <span className="text-slate-400">Serving Mumbai & Navi Mumbai</span>
             )}
           </div>
         </div>
@@ -193,23 +173,14 @@ export default function Navbar({ onOpenQuote }) {
                         <div className="absolute top-full left-0 w-[620px] bg-white border border-slate-200 rounded-2xl shadow-xl p-4 transition-all duration-200 z-50 animate-fadeIn mt-1">
                           
                           {/* Top Sub-Bar with Direct Page Links */}
-                          <div className="pb-3 mb-2 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 px-1">
+                          <div className="pb-3 mb-2 border-b border-slate-100 flex items-center justify-between px-1">
                             <Link 
                               to="/services" 
                               onClick={() => setIsServicesOpen(false)}
                               className="text-xs text-gold-700 hover:text-gold-800 font-extrabold flex items-center space-x-1"
                             >
-                              <span>🛠️ All 12 Services</span>
+                              <span>🛠️ View All 12 Services Page</span>
                               <ArrowRight className="w-3 h-3" />
-                            </Link>
-
-                            <Link 
-                              to="/service-request/non-amc" 
-                              onClick={() => setIsServicesOpen(false)}
-                              className="text-xs text-emerald-800 hover:text-emerald-900 font-bold bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200 flex items-center space-x-1 transition-colors"
-                            >
-                              <Wrench className="w-3 h-3 text-emerald-600" />
-                              <span>Non-AMC Repair (₹800 Visit)</span>
                             </Link>
 
                             <Link 
@@ -217,7 +188,8 @@ export default function Navbar({ onOpenQuote }) {
                               onClick={() => setIsServicesOpen(false)}
                               className="text-xs text-slate-800 hover:text-gold-700 font-bold bg-gold-50 hover:bg-gold-100 px-2.5 py-1 rounded-lg border border-gold-200 flex items-center space-x-1 transition-colors"
                             >
-                              <span>📍 14 Mumbai Hubs</span>
+                              <span>📍 Mumbai Service Areas (14 Locations)</span>
+                              <ArrowRight className="w-3 h-3 text-gold-600" />
                             </Link>
                           </div>
 
@@ -243,25 +215,6 @@ export default function Navbar({ onOpenQuote }) {
                                 </div>
                               </Link>
                             ))}
-                          </div>
-
-                          {/* Bottom Area Quick Link Banner */}
-                          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs px-2 bg-slate-50 p-2 rounded-xl">
-                            <Link
-                              to="/service-request"
-                              onClick={() => setIsServicesOpen(false)}
-                              className="text-[11px] text-slate-700 font-bold hover:text-gold-700 flex items-center space-x-1"
-                            >
-                              <Wrench className="w-3 h-3 text-gold-600" />
-                              <span>Need Service? AMC Priority vs Non-AMC Paid Queue</span>
-                            </Link>
-                            <Link
-                              to="/track-service"
-                              onClick={() => setIsServicesOpen(false)}
-                              className="font-bold text-gold-700 hover:underline flex items-center space-x-1 text-[11px]"
-                            >
-                              <span>🔍 Track Complaint →</span>
-                            </Link>
                           </div>
 
                         </div>
