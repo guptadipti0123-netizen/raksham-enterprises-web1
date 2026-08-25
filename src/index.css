@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+  
+  body {
+    background-color: #FFFFFF;
+    color: #1E293B;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    color: #0F172A;
+  }
+}
+
+@layer utilities {
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #B0883E 0%, #C8A251 50%, #946E2E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .gold-border-glow {
+    border-color: rgba(200, 162, 81, 0.4);
+    box-shadow: 0 4px 20px -2px rgba(200, 162, 81, 0.15);
+  }
+
+  .gold-border-glow:hover {
+    border-color: rgba(200, 162, 81, 0.8);
+    box-shadow: 0 8px 30px -4px rgba(200, 162, 81, 0.25);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C8A251;
+}
+
+/* Print Styles for CCTV Service Report (PDF 1) */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-service-report, #printable-service-report * {
+    visibility: visible;
+  }
+  #printable-service-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    color: black !important;
+    padding: 0;
+    margin: 0;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
