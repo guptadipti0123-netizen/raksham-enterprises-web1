@@ -193,14 +193,23 @@ export default function Navbar({ onOpenQuote }) {
                         <div className="absolute top-full left-0 w-[620px] bg-white border border-slate-200 rounded-2xl shadow-xl p-4 transition-all duration-200 z-50 animate-fadeIn mt-1">
                           
                           {/* Top Sub-Bar with Direct Page Links */}
-                          <div className="pb-3 mb-2 border-b border-slate-100 flex items-center justify-between px-1">
+                          <div className="pb-3 mb-2 border-b border-slate-100 flex flex-wrap items-center justify-between gap-2 px-1">
                             <Link 
                               to="/services" 
                               onClick={() => setIsServicesOpen(false)}
                               className="text-xs text-gold-700 hover:text-gold-800 font-extrabold flex items-center space-x-1"
                             >
-                              <span>🛠️ View All 12 Services Page</span>
+                              <span>🛠️ All 12 Services</span>
                               <ArrowRight className="w-3 h-3" />
+                            </Link>
+
+                            <Link 
+                              to="/service-request/non-amc" 
+                              onClick={() => setIsServicesOpen(false)}
+                              className="text-xs text-emerald-800 hover:text-emerald-900 font-bold bg-emerald-50 hover:bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200 flex items-center space-x-1 transition-colors"
+                            >
+                              <Wrench className="w-3 h-3 text-emerald-600" />
+                              <span>Non-AMC Repair (₹800 Visit)</span>
                             </Link>
 
                             <Link 
@@ -208,8 +217,7 @@ export default function Navbar({ onOpenQuote }) {
                               onClick={() => setIsServicesOpen(false)}
                               className="text-xs text-slate-800 hover:text-gold-700 font-bold bg-gold-50 hover:bg-gold-100 px-2.5 py-1 rounded-lg border border-gold-200 flex items-center space-x-1 transition-colors"
                             >
-                              <span>📍 Mumbai Service Areas (14 Hubs)</span>
-                              <ArrowRight className="w-3 h-3 text-gold-600" />
+                              <span>📍 14 Mumbai Hubs</span>
                             </Link>
                           </div>
 
@@ -239,15 +247,20 @@ export default function Navbar({ onOpenQuote }) {
 
                           {/* Bottom Area Quick Link Banner */}
                           <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs px-2 bg-slate-50 p-2 rounded-xl">
-                            <span className="text-[11px] text-slate-600 font-medium">
-                              Covering Chembur, Ghatkopar, Sakinaka, Andheri, Navi Mumbai & more
-                            </span>
                             <Link
-                              to="/service-areas"
+                              to="/service-request"
                               onClick={() => setIsServicesOpen(false)}
-                              className="font-bold text-gold-700 hover:underline flex items-center space-x-1"
+                              className="text-[11px] text-slate-700 font-bold hover:text-gold-700 flex items-center space-x-1"
                             >
-                              <span>Explore Locations →</span>
+                              <Wrench className="w-3 h-3 text-gold-600" />
+                              <span>Need Service? AMC Priority vs Non-AMC Paid Queue</span>
+                            </Link>
+                            <Link
+                              to="/track-service"
+                              onClick={() => setIsServicesOpen(false)}
+                              className="font-bold text-gold-700 hover:underline flex items-center space-x-1 text-[11px]"
+                            >
+                              <span>🔍 Track Complaint →</span>
                             </Link>
                           </div>
 
