@@ -44,6 +44,9 @@ export default function HomePage({ onOpenQuote }) {
     message: ''
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [activeLocId, setActiveLocId] = useState('chembur');
+
+  const activeLoc = MUMBAI_LOCATIONS.find(l => l.id === activeLocId) || MUMBAI_LOCATIONS[0];
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
@@ -459,33 +462,137 @@ export default function HomePage({ onOpenQuote }) {
         </div>
       </section>
 
-      {/* 6. MUMBAI SERVICE HUBS CHIPS */}
-      <section className="py-12 bg-slate-50 border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      {/* 6. MUMBAI SERVICE HUBS & INTERACTIVE COVERAGE MAP */}
+      <section className="py-14 bg-slate-50 border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <span className="text-[10px] font-bold text-gold-700 uppercase tracking-wider block">Local Coverage</span>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-50 border border-gold-200 text-gold-800 text-[11px] font-bold uppercase tracking-wider mb-1.5">
+                <MapPin className="w-3.5 h-3.5 text-gold-600" />
+                <span>Local Mumbai Coverage Network</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
                 Fast Technician Dispatch Across Mumbai
               </h2>
+              <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl">
+                Select any location below to see nearby technician hubs, landmark coverage, and rapid response SLAs.
+              </p>
             </div>
-            <Link to="/service-areas" className="text-xs font-bold text-gold-700 hover:underline">
-              View All 14 Hubs & Local Pages →
+
+            <Link 
+              to="/service-areas" 
+              className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-white border border-slate-300 hover:border-gold-400 text-slate-800 font-bold text-xs shadow-2xs transition-colors self-start sm:self-auto"
+            >
+              <span>View All 14 Hubs Directory</span>
+              <ChevronRight className="w-4 h-4 text-gold-600" />
             </Link>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {MUMBAI_LOCATIONS.map((loc) => (
-              <Link
-                key={loc.id}
-                to={`/service-areas/${loc.id}`}
-                className="px-3.5 py-2 rounded-xl bg-white hover:bg-gold-50 border border-slate-200 hover:border-gold-300 text-xs font-semibold text-slate-800 hover:text-gold-900 transition-all flex items-center space-x-1.5 shadow-2xs"
-              >
-                <MapPin className="w-3 h-3 text-gold-600" />
-                <span>{loc.name}</span>
-              </Link>
-            ))}
+          {/* Interactive Map & Hub Details Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            {/* Left: Interactive Map Container & Selected Hub Spotlight Card */}
+            <div className="lg:col-span-7 space-y-4">
+              
+              {/* Styled Interactive Map Frame */}
+              <div className="relative rounded-3xl overflow-hidden border border-slate-300 shadow-md bg-slate-900 h-[280px] sm:h-[320px]">
+                <iframe
+                  title="Raksham Mumbai Coverage Map"
+                  src={`https://maps.google.com/maps?q=${encodeURIComponent(activeLoc.name + ', Mumbai, Maharashtra')}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                  className="w-full h-full border-0 filter contrast-105 opacity-90"
+                  loading="lazy"
+                ></iframe>
+
+                {/* Floating Top-Left Status Badge */}
+                <div className="absolute top-3 left-3 bg-slate-900/90 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-700 text-[11px] font-bold text-white flex items-center space-x-2 shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+                  <span>Live Dispatch Hub: {activeLoc.name}</span>
+                </div>
+
+                {/* Floating Top-Right SLA Badge */}
+                <div className="absolute top-3 right-3 bg-gold-500 text-slate-950 px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider shadow-md">
+                  {activeLoc.tag || '2hr Dispatch'}
+                </div>
+              </div>
+
+              {/* Selected Location Details Card */}
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fadeIn">
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-2">
+                    <h3 className="text-base font-bold text-slate-900">
+                      {activeLoc.name} Hub
+                    </h3>
+                    <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                      {activeLoc.hub}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600">
+                    <strong>Landmarks covered:</strong> {activeLoc.landmark}
+                  </p>
+                </div>
+
+                <Link
+                  to={`/service-areas/${activeLoc.id}`}
+                  className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center justify-center space-x-1.5 flex-shrink-0 transition-colors"
+                >
+                  <span>Explore {activeLoc.name} →</span>
+                </Link>
+              </div>
+
+            </div>
+
+            {/* Right: Interactive 14 Location Micro-Chips Grid */}
+            <div className="lg:col-span-5 bg-white p-5 rounded-3xl border border-slate-200 shadow-soft space-y-4">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                  Select A Service Hub (14 Locations)
+                </span>
+                <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  ● Technicians On-Duty
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-2 gap-2">
+                {MUMBAI_LOCATIONS.map((loc) => {
+                  const isSelected = loc.id === activeLocId;
+                  return (
+                    <button
+                      key={loc.id}
+                      type="button"
+                      onClick={() => setActiveLocId(loc.id)}
+                      className={`p-2.5 rounded-xl text-left transition-all flex items-center justify-between group border ${
+                        isSelected
+                          ? 'bg-gold-500 text-slate-950 border-gold-600 shadow-sm font-bold scale-[1.02]'
+                          : 'bg-slate-50 hover:bg-gold-50/60 text-slate-700 hover:text-slate-900 border-slate-200 hover:border-gold-300'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2 truncate">
+                        <MapPin className={`w-3.5 h-3.5 flex-shrink-0 ${isSelected ? 'text-slate-950' : 'text-gold-600'}`} />
+                        <span className="text-xs truncate">{loc.name}</span>
+                      </div>
+                      
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${
+                        isSelected ? 'bg-slate-950/20 text-slate-950' : 'text-slate-400 bg-white border border-slate-200'
+                      }`}>
+                        {loc.tag?.split(' ')[0] || 'Fast'}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="pt-2 text-center text-[11px] text-slate-500 border-t border-slate-100">
+                <span>Looking for urgent CCTV repair? </span>
+                <Link to="/service-request" className="text-gold-700 font-bold hover:underline">
+                  Book Technician Now →
+                </Link>
+              </div>
+            </div>
+
           </div>
+
         </div>
       </section>
 
