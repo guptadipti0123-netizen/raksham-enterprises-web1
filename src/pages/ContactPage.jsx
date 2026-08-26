@@ -135,12 +135,20 @@ export default function ContactPage() {
                     </div>
                   </div>
 
-                  {/* Location */}
+                  {/* Location & Google Maps */}
                   <div className="p-3.5 rounded-xl bg-white border border-slate-200 flex items-start space-x-3">
                     <MapPin className="w-4 h-4 text-gold-600 flex-shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-slate-500 block text-[11px]">Service Area:</span>
-                      <span className="text-slate-800 font-semibold">Mumbai, Navi Mumbai, Thane & MMR, Maharashtra</span>
+                    <div className="space-y-1">
+                      <span className="text-slate-500 block text-[11px]">Head Office & Service Areas:</span>
+                      <span className="text-slate-800 font-semibold block">Mumbai, Navi Mumbai, Thane & MMR, Maharashtra</span>
+                      <a 
+                        href={COMPANY_INFO.googleMapsUrl || "https://maps.app.goo.gl/vh4YBiiS1bh3CJ3P7?g_st=awb"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center space-x-1 text-gold-700 hover:text-gold-800 font-bold text-xs hover:underline pt-0.5"
+                      >
+                        <span>View on Google Maps & Reviews ↗</span>
+                      </a>
                     </div>
                   </div>
                 </div>

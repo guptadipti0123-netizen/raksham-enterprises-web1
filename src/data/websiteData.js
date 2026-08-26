@@ -12,6 +12,7 @@ export const COMPANY_INFO = {
   city: "Mumbai",
   experienceYears: "15+",
   workingHours: "Monday - Sunday: 8:00 AM - 9:00 PM (24x7 Emergency Support)",
+  googleMapsUrl: "https://maps.app.goo.gl/vh4YBiiS1bh3CJ3P7?g_st=awb",
   heroHeading: "CCTV & Security System Solutions in Mumbai",
   heroSubheading: "Professional CCTV installation, repair, AMC and complete electronic security solutions for homes, offices, shops, societies and commercial properties.",
 };
