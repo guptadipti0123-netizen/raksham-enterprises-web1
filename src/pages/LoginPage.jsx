@@ -82,9 +82,6 @@ export default function LoginPage() {
 
   const [generatedIdSuccess, setGeneratedIdSuccess] = useState(null);
 
-  // Live Auto-Generated ID Preview
-  const previewCustomerId = generateSmartCustomerId(regData.location, regData.zone, (customers?.length || 0) + 1);
-
   // Sync tab if URL changes
   useEffect(() => {
     if (location.pathname === '/register') {
@@ -119,7 +116,7 @@ export default function LoginPage() {
   // Handle Customer Self-Registration
   const handleRegisterSubmit = (e) => {
     e.preventDefault();
-    if (!regData.societyName.trim() || !regData.mobile.trim() || !regData.contactPerson.trim()) {
+    if (!regData.societyName?.trim() || !regData.mobile?.trim() || !regData.contactPerson?.trim()) {
       setErrorMessage('Please fill in Society Name, Contact Person and Mobile Number.');
       return;
     }
@@ -127,15 +124,12 @@ export default function LoginPage() {
     setErrorMessage('');
     
     // Generate Customer ID & Save to Database
-    const newCust = registerCustomer({
-      ...regData,
-      customId: previewCustomerId
-    });
+    const newCust = registerCustomer(regData);
 
     if (newCust && newCust.customerNo) {
       setGeneratedIdSuccess(newCust);
       setIdentifier(newCust.customerNo);
-      setSuccessMessage(`Registration Successful! Your Customer ID is ${newCust.customerNo}. Please log in below.`);
+      setSuccessMessage(`Account Created Successfully! Your Customer ID is ${newCust.customerNo}.`);
       setActiveTab('customer');
     }
   };
@@ -420,28 +414,15 @@ export default function LoginPage() {
                 </select>
               </div>
 
-              {/* Live Auto-Generated ID Preview Box */}
-              <div className="p-3 rounded-2xl bg-slate-900 text-white flex items-center justify-between border border-gold-500/40 shadow-sm animate-fadeIn">
-                <div className="space-y-0.5">
-                  <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider block">
-                    ✨ Smart Auto-Generated Customer ID
-                  </span>
-                  <span className="text-base font-black text-gold-400 font-mono tracking-wider">
-                    {previewCustomerId}
-                  </span>
-                </div>
-                <div className="text-right text-[10px] text-slate-300 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700">
-                  <span>{regData.location.slice(0, 3).toUpperCase()} + {regData.zone[0]} + 26 + 01</span>
-                </div>
+              <div className="pt-1">
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md transition-all flex items-center justify-center space-x-2 cursor-pointer active:scale-[0.99]"
+                >
+                  <Sparkles className="w-4 h-4 text-emerald-200" />
+                  <span>Register & Generate My Customer ID →</span>
+                </button>
               </div>
-
-              <button
-                type="submit"
-                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1.5 mt-2"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Register & Generate Customer ID</span>
-              </button>
 
               <div className="pt-2 text-center">
                 <button

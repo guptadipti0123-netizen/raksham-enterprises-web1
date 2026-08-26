@@ -333,17 +333,7 @@ export function AuthProvider({ children }) {
     return newRep;
   };
 
-  const registerCustomer = async (data) => {
-    // Attempt backend registration
-    try {
-      const res = await authApi.register(data);
-      if (res && res.token) {
-        localStorage.setItem('raksham_jwt_token', res.token);
-      }
-    } catch (e) {
-      console.warn('Backend offline, registered locally:', e.message);
-    }
-
+  const registerCustomer = (data) => {
     let newCustomerNo = data.customId;
     if (!newCustomerNo) {
       let prefix = 'MUM';
@@ -397,6 +387,16 @@ export function AuthProvider({ children }) {
     const updated = [newCust, ...customers];
     setCustomers(updated);
     localStorage.setItem('raksham_customers', JSON.stringify(updated));
+
+    // Attempt backend registration asynchronously
+    authApi.register({ ...data, customId: newCustomerNo })
+      .then(res => {
+        if (res && res.token) {
+          localStorage.setItem('raksham_jwt_token', res.token);
+        }
+      })
+      .catch(e => console.warn('Backend offline, registered locally:', e.message));
+
     return newCust;
   };
 
