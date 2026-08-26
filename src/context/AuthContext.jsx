@@ -7,6 +7,8 @@ import {
   INITIAL_EQUIPMENT,
   INITIAL_NON_AMC_REQUESTS 
 } from '../data/websiteData';
+import { dbService } from '../services/dbService';
+import { isSupabaseConfigured } from '../lib/supabaseClient';
 
 const AuthContext = createContext(null);
 
@@ -20,7 +22,7 @@ export function AuthProvider({ children }) {
     return INITIAL_CUSTOMERS[0]; // Silver Springs Residency (ULV2601)
   });
 
-  // State collections persisted in localStorage or memory
+  // State collections persisted in database and synchronized with local cache
   const [customers, setCustomers] = useState(() => {
     const saved = localStorage.getItem('raksham_customers');
     return saved ? JSON.parse(saved) : INITIAL_CUSTOMERS;
@@ -55,6 +57,16 @@ export function AuthProvider({ children }) {
     const saved = localStorage.getItem('raksham_feedbacks');
     return saved ? JSON.parse(saved) : [];
   });
+
+  // Asynchronously synchronize with Cloud Database on mount if configured
+  useEffect(() => {
+    if (isSupabaseConfigured) {
+      dbService.getCustomers().then(data => data && setCustomers(data));
+      dbService.getServiceRequests().then(data => data && setServiceRequests(data));
+      dbService.getNonAmcRequests().then(data => data && setNonAmcRequests(data));
+      dbService.getServiceReports().then(data => data && setServiceReports(data));
+    }
+  }, []);
 
   useEffect(() => {
     if (userRole) {
