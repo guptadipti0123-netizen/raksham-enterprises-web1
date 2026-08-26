@@ -9,6 +9,7 @@ import {
 } from '../data/websiteData';
 import { dbService } from '../services/dbService';
 import { isSupabaseConfigured } from '../lib/supabaseClient';
+import { authApi, enquiryApi, serviceRequestApi, serviceReportApi } from '../services/api';
 
 const AuthContext = createContext(null);
 
@@ -58,14 +59,17 @@ export function AuthProvider({ children }) {
     return saved ? JSON.parse(saved) : [];
   });
 
-  // Asynchronously synchronize with Cloud Database on mount if configured
+  // Asynchronously synchronize with Backend API or Cloud Database on mount
   useEffect(() => {
-    if (isSupabaseConfigured) {
-      dbService.getCustomers().then(data => data && setCustomers(data));
-      dbService.getServiceRequests().then(data => data && setServiceRequests(data));
-      dbService.getNonAmcRequests().then(data => data && setNonAmcRequests(data));
-      dbService.getServiceReports().then(data => data && setServiceReports(data));
-    }
+    // Attempt backend sync
+    serviceReportApi.getAll()
+      .then(res => res.serviceReports && setServiceReports(res.serviceReports))
+      .catch(() => {
+        // Fallback to local / supabase
+        if (isSupabaseConfigured) {
+          dbService.getServiceReports().then(data => data && setServiceReports(data));
+        }
+      });
   }, []);
 
   useEffect(() => {
@@ -73,14 +77,25 @@ export function AuthProvider({ children }) {
       localStorage.setItem('raksham_user_role', userRole);
     } else {
       localStorage.removeItem('raksham_user_role');
+      localStorage.removeItem('raksham_jwt_token');
     }
   }, [userRole]);
 
   // Auth Methods
-  const loginAsCustomer = (identifier = 'ULV2601') => {
+  const loginAsCustomer = async (identifier = 'ULV2601') => {
     if (!identifier) return false;
     const clean = identifier.trim().toLowerCase();
     
+    // Attempt backend API login
+    try {
+      const res = await authApi.login({ identifier });
+      if (res && res.token) {
+        localStorage.setItem('raksham_jwt_token', res.token);
+      }
+    } catch (apiErr) {
+      console.warn('Backend offline, using local session:', apiErr.message);
+    }
+
     // 1. Search by customerNo
     let cust = customers.find(c => c.customerNo?.toLowerCase() === clean);
     
@@ -118,6 +133,9 @@ export function AuthProvider({ children }) {
 
   // Business Logic Methods
   const addEnquiry = (enquiryData) => {
+    // Call backend API
+    enquiryApi.create(enquiryData).catch(e => console.warn('Enquiry API offline fallback:', e.message));
+
     const newEnq = {
       id: `ENQ-${Date.now().toString().slice(-4)}`,
       date: new Date().toISOString().split('T')[0],
@@ -138,6 +156,12 @@ export function AuthProvider({ children }) {
 
   // AMC Priority Service Complaint Logger
   const addServiceRequest = (reqData) => {
+    // Call backend API
+    serviceRequestApi.create({
+      ...reqData,
+      serviceType: 'AMC_PRIORITY'
+    }).catch(e => console.warn('ServiceRequest API offline fallback:', e.message));
+
     const today = new Date();
     const dateStr = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
     const randNo = Math.floor(100 + Math.random() * 900);
@@ -176,6 +200,12 @@ export function AuthProvider({ children }) {
 
   // Dedicated Non-AMC Service Request Generator
   const addNonAmcRequest = (data) => {
+    // Call backend API
+    serviceRequestApi.create({
+      ...data,
+      serviceType: 'NON_AMC_PAID'
+    }).catch(e => console.warn('NonAmc API offline fallback:', e.message));
+
     const today = new Date();
     const dateStr = `${today.getFullYear()}${(today.getMonth() + 1).toString().padStart(2, '0')}${today.getDate().toString().padStart(2, '0')}`;
     const seq = (nonAmcRequests.length + 1).toString().padStart(3, '0');
@@ -215,72 +245,64 @@ export function AuthProvider({ children }) {
 
   const approveEstimate = (complaintNo, approved = true) => {
     const updated = nonAmcRequests.map(r => {
-      if (r.complaintNo === complaintNo && r.estimate) {
+      if (r.complaintNo === complaintNo) {
         return {
           ...r,
-          status: approved ? 'In Progress (Estimate Approved)' : 'Estimate Declined',
-          estimate: {
-            ...r.estimate,
-            customerApprovalStatus: approved ? 'Approved by Customer' : 'Declined by Customer',
-            approvalTimestamp: new Date().toISOString()
-          }
+          status: approved ? 'In Progress' : 'Estimate Declined',
+          estimateApproved: approved,
+          notes: approved ? 'Client approved spare parts quotation via online portal.' : 'Estimate declined by client.'
         };
       }
       return r;
     });
     setNonAmcRequests(updated);
     localStorage.setItem('raksham_non_amc_requests', JSON.stringify(updated));
+    return true;
   };
 
   // ⭐ ONE-TIME TO AMC CONVERSION ENGINE
-  const convertToAmc = (sourceData, planName = 'Society & Enterprise Comprehensive Shield') => {
-    const locPrefix = (sourceData.location || sourceData.city || 'MUM').slice(0, 3).toUpperCase();
-    const custNum = `${locPrefix}${Math.floor(1000 + Math.random() * 9000)}`;
-    const nextYear = new Date();
-    nextYear.setFullYear(nextYear.getFullYear() + 1);
-
-    const newAmcCustomer = {
+  const convertToAmc = (complaintNo, societyDetails) => {
+    const newCustNo = `AMC${Math.floor(1000 + Math.random() * 9000)}`;
+    const newCust = {
       id: `CUST-${Date.now().toString().slice(-4)}`,
-      customerNo: custNum,
-      name: sourceData.customerName || sourceData.name || 'New AMC Client',
-      type: sourceData.customerType || sourceData.propertyType || 'Residential Society',
-      address: sourceData.address || sourceData.location || 'Mumbai, Maharashtra',
-      contactPerson: sourceData.customerName || sourceData.name || 'Site Incharge',
-      contactPhone: sourceData.mobile || sourceData.contactNumber || sourceData.phone || '+91 9867890606',
-      contactEmail: sourceData.email || 'client@raksham.com',
-      activeAmc: true,
-      amcExpiry: nextYear.toISOString().split('T')[0],
-      amcPlan: planName,
-      cameraCount: sourceData.cameraCount || sourceData.noOfCameras || 8,
-      systemType: 'CCTV Surveillance System (AMC Protected)'
+      customerNo: newCustNo,
+      name: societyDetails.name || 'Converted AMC Society',
+      contactPerson: societyDetails.contactPerson || 'Secretary',
+      contactPhone: societyDetails.phone || '+91 9867890606',
+      address: societyDetails.address || 'Mumbai, Maharashtra',
+      amcStatus: 'Active',
+      amcType: 'Raksham CCTV Shield Comprehensive AMC',
+      amcExpiry: '2027-08-25',
+      camerasCount: societyDetails.cameras || 8
     };
 
-    const updatedCustomers = [newAmcCustomer, ...customers];
+    const updatedCustomers = [newCust, ...customers];
     setCustomers(updatedCustomers);
     localStorage.setItem('raksham_customers', JSON.stringify(updatedCustomers));
 
-    // If converted from Non-AMC, tag the request
-    if (sourceData.complaintNo) {
-      updateNonAmcRequest(sourceData.id, {
-        amcConverted: true,
-        convertedCustomerNo: custNum
-      });
-    }
+    const updatedReqs = nonAmcRequests.map(r => {
+      if (r.complaintNo === complaintNo) {
+        return {
+          ...r,
+          amcConverted: true,
+          convertedCustomerNo: newCustNo,
+          notes: `Upgraded to AMC Contract (${newCustNo}).`
+        };
+      }
+      return r;
+    });
+    setNonAmcRequests(updatedReqs);
+    localStorage.setItem('raksham_non_amc_requests', JSON.stringify(updatedReqs));
 
-    // Set active customer & role
-    setActiveCustomer(newAmcCustomer);
-    setUserRole('customer');
-    return newAmcCustomer;
+    return newCust;
   };
 
   // Customer Feedback Logger
-  const addFeedback = (complaintId, rating, comment) => {
+  const addFeedback = (feedbackData) => {
     const newFb = {
       id: `FB-${Date.now().toString().slice(-4)}`,
-      complaintId,
-      rating,
-      comment,
-      date: new Date().toISOString().split('T')[0]
+      date: new Date().toISOString().split('T')[0],
+      ...feedbackData
     };
     const updated = [newFb, ...feedbacks];
     setFeedbacks(updated);
@@ -290,25 +312,18 @@ export function AuthProvider({ children }) {
 
   const getComplaintByNo = (complaintNo) => {
     if (!complaintNo) return null;
-    const cleanNo = complaintNo.trim().toUpperCase();
-    
-    // Search in Non-AMC
-    const nonAmc = nonAmcRequests.find(r => r.complaintNo?.toUpperCase() === cleanNo || r.id?.toUpperCase() === cleanNo);
-    if (nonAmc) return { ...nonAmc, isNonAmc: true };
-
-    // Search in AMC
-    const amcReq = serviceRequests.find(r => r.ticketNo?.toUpperCase() === cleanNo || r.complaintNo?.toUpperCase() === cleanNo || r.id?.toUpperCase() === cleanNo);
-    if (amcReq) return { ...amcReq, isNonAmc: false };
-
-    return null;
+    const clean = complaintNo.trim().toUpperCase();
+    return nonAmcRequests.find(r => r.complaintNo?.toUpperCase() === clean || r.ticketNo?.toUpperCase() === clean) ||
+           serviceRequests.find(r => r.ticketNo?.toUpperCase() === clean || r.complaintNo?.toUpperCase() === clean);
   };
 
   const addServiceReport = (reportData) => {
+    // Call backend API to generate S3 PDF
+    serviceReportApi.create(reportData).catch(e => console.warn('ServiceReport API offline fallback:', e.message));
+
     const newRep = {
       id: `REP-${Date.now().toString().slice(-4)}`,
-      reportNo: reportData.reportNo || `RE-${Math.floor(10000 + Math.random() * 90000)}-1`,
-      date: new Date().toISOString().split('T')[0],
-      status: 'Completed & Verified',
+      reportId: `REP-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
       createdAt: new Date().toISOString().split('T')[0],
       ...reportData
     };
@@ -318,7 +333,17 @@ export function AuthProvider({ children }) {
     return newRep;
   };
 
-  const registerCustomer = (data) => {
+  const registerCustomer = async (data) => {
+    // Attempt backend registration
+    try {
+      const res = await authApi.register(data);
+      if (res && res.token) {
+        localStorage.setItem('raksham_jwt_token', res.token);
+      }
+    } catch (e) {
+      console.warn('Backend offline, registered locally:', e.message);
+    }
+
     const locPrefix = (data.location || 'MUM').slice(0, 3).toUpperCase();
     const rand = Math.floor(1000 + Math.random() * 9000);
     const newCustomerNo = `${locPrefix}${rand}`;
