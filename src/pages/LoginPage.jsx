@@ -16,8 +16,44 @@ import {
 } from 'lucide-react';
 import { COMPANY_INFO, MUMBAI_LOCATIONS } from '../data/websiteData';
 
+// Smart Location & Zone-based Customer ID Generator (e.g. CHEE2601, GHAW2601, ULV2601)
+export const generateSmartCustomerId = (location = 'Chembur', zone = 'East', seq = 1) => {
+  let prefix = 'MUM';
+  const locLower = (location || '').toLowerCase();
+  
+  if (locLower.includes('chembur')) prefix = 'CHE';
+  else if (locLower.includes('ghatkopar')) prefix = 'GHA';
+  else if (locLower.includes('andheri')) prefix = 'AND';
+  else if (locLower.includes('sakinaka')) prefix = 'SAK';
+  else if (locLower.includes('vikhroli')) prefix = 'VIK';
+  else if (locLower.includes('kurla')) prefix = 'KUR';
+  else if (locLower.includes('powai')) prefix = 'POW';
+  else if (locLower.includes('mulund')) prefix = 'MUL';
+  else if (locLower.includes('bhandup')) prefix = 'BHA';
+  else if (locLower.includes('wadala')) prefix = 'WAD';
+  else if (locLower.includes('govandi')) prefix = 'GOV';
+  else if (locLower.includes('mankhurd')) prefix = 'MAN';
+  else if (locLower.includes('ulwe')) prefix = 'ULV';
+  else if (locLower.includes('navi') || locLower.includes('vashi') || locLower.includes('nerul')) prefix = 'NAV';
+  else if (locLower.includes('thane')) prefix = 'THA';
+  else if (locLower.includes('dadar')) prefix = 'DAD';
+  else if (locLower.includes('bandra')) prefix = 'BAN';
+  else prefix = (location.replace(/[^a-zA-Z]/g, '') || 'MUM').slice(0, 3).toUpperCase();
+
+  let zoneChar = 'E';
+  const zoneLower = (zone || '').toLowerCase();
+  if (zoneLower.startsWith('w') || zoneLower.includes('west')) zoneChar = 'W';
+  else if (zoneLower.startsWith('c') || zoneLower.includes('central') || zoneLower.includes('midc')) zoneChar = 'C';
+  else zoneChar = 'E';
+
+  const yearSeq = '26'; // Year 2026
+  const seqNum = (seq || 1).toString().padStart(2, '0');
+
+  return `${prefix}${zoneChar}${yearSeq}${seqNum}`;
+};
+
 export default function LoginPage() {
-  const { loginAsCustomer, registerCustomer, loginAsAdmin } = useAuth();
+  const { loginAsCustomer, registerCustomer, loginAsAdmin, customers } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -33,16 +69,21 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Register form states
+  // Register form states (with smart location & East/West zone support)
   const [regData, setRegData] = useState({
     societyName: '',
     contactPerson: '',
     mobile: '',
     location: 'Chembur',
+    zone: 'East',
+    address: '',
     camerasCount: '8'
   });
 
   const [generatedIdSuccess, setGeneratedIdSuccess] = useState(null);
+
+  // Live Auto-Generated ID Preview
+  const previewCustomerId = generateSmartCustomerId(regData.location, regData.zone, (customers?.length || 0) + 1);
 
   // Sync tab if URL changes
   useEffect(() => {
@@ -86,7 +127,10 @@ export default function LoginPage() {
     setErrorMessage('');
     
     // Generate Customer ID & Save to Database
-    const newCust = registerCustomer(regData);
+    const newCust = registerCustomer({
+      ...regData,
+      customId: previewCustomerId
+    });
 
     if (newCust && newCust.customerNo) {
       setGeneratedIdSuccess(newCust);
@@ -327,15 +371,15 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="sm:col-span-2">
                   <label className="font-bold text-slate-700 block mb-1">
                     Location in Mumbai *
                   </label>
                   <select
                     value={regData.location}
                     onChange={(e) => setRegData({ ...regData, location: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:border-gold-500 focus:bg-white"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:border-gold-500 focus:bg-white text-xs"
                   >
                     {MUMBAI_LOCATIONS.map(l => (
                       <option key={l.id} value={l.name}>{l.name} ({l.hub})</option>
@@ -345,18 +389,49 @@ export default function LoginPage() {
 
                 <div>
                   <label className="font-bold text-slate-700 block mb-1">
-                    Installed CCTV Cameras *
+                    Zone / Side *
                   </label>
                   <select
-                    value={regData.camerasCount}
-                    onChange={(e) => setRegData({ ...regData, camerasCount: e.target.value })}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:border-gold-500 focus:bg-white"
+                    value={regData.zone}
+                    onChange={(e) => setRegData({ ...regData, zone: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-bold focus:outline-none focus:border-gold-500 focus:bg-white text-xs"
                   >
-                    <option value="4">4 Cameras (Small Site)</option>
-                    <option value="8">8 Cameras (Standard Complex)</option>
-                    <option value="16">16 Cameras (Large Society)</option>
-                    <option value="32">32+ Cameras (Commercial)</option>
+                    <option value="East">East (E)</option>
+                    <option value="West">West (W)</option>
+                    <option value="Central">Central (C)</option>
                   </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="font-bold text-slate-700 block mb-1">
+                  Installed CCTV Cameras *
+                </label>
+                <select
+                  value={regData.camerasCount}
+                  onChange={(e) => setRegData({ ...regData, camerasCount: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 font-semibold focus:outline-none focus:border-gold-500 focus:bg-white text-xs"
+                >
+                  <option value="4">4 Cameras (Small Site)</option>
+                  <option value="8">8 Cameras (Standard Complex)</option>
+                  <option value="14">14 Cameras (Society Tower)</option>
+                  <option value="16">16 Cameras (Large Society)</option>
+                  <option value="32">32+ Cameras (Commercial Complex)</option>
+                </select>
+              </div>
+
+              {/* Live Auto-Generated ID Preview Box */}
+              <div className="p-3 rounded-2xl bg-slate-900 text-white flex items-center justify-between border border-gold-500/40 shadow-sm animate-fadeIn">
+                <div className="space-y-0.5">
+                  <span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider block">
+                    ✨ Smart Auto-Generated Customer ID
+                  </span>
+                  <span className="text-base font-black text-gold-400 font-mono tracking-wider">
+                    {previewCustomerId}
+                  </span>
+                </div>
+                <div className="text-right text-[10px] text-slate-300 bg-slate-800/80 px-2.5 py-1 rounded-lg border border-slate-700">
+                  <span>{regData.location.slice(0, 3).toUpperCase()} + {regData.zone[0]} + 26 + 01</span>
                 </div>
               </div>
 

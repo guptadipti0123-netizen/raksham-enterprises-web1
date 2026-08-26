@@ -150,10 +150,41 @@ export const authController = {
         });
       }
 
-      // Generate Unique Permanent Customer ID (e.g. CHE4819)
-      const locPrefix = (location || 'MUM').slice(0, 3).toUpperCase();
-      const rand = Math.floor(1000 + Math.random() * 9000);
-      const customerNo = `${locPrefix}${rand}`;
+      // Generate Smart Location & Zone-based Customer ID (e.g. CHEE2601, GHAW2601, ULV2601)
+      let customerNo = req.body.customId;
+      if (!customerNo) {
+        let prefix = 'MUM';
+        const locLower = (location || '').toLowerCase();
+        if (locLower.includes('chembur')) prefix = 'CHE';
+        else if (locLower.includes('ghatkopar')) prefix = 'GHA';
+        else if (locLower.includes('andheri')) prefix = 'AND';
+        else if (locLower.includes('sakinaka')) prefix = 'SAK';
+        else if (locLower.includes('vikhroli')) prefix = 'VIK';
+        else if (locLower.includes('kurla')) prefix = 'KUR';
+        else if (locLower.includes('powai')) prefix = 'POW';
+        else if (locLower.includes('mulund')) prefix = 'MUL';
+        else if (locLower.includes('bhandup')) prefix = 'BHA';
+        else if (locLower.includes('wadala')) prefix = 'WAD';
+        else if (locLower.includes('govandi')) prefix = 'GOV';
+        else if (locLower.includes('mankhurd')) prefix = 'MAN';
+        else if (locLower.includes('ulwe')) prefix = 'ULV';
+        else if (locLower.includes('navi') || locLower.includes('vashi') || locLower.includes('nerul')) prefix = 'NAV';
+        else if (locLower.includes('thane')) prefix = 'THA';
+        else if (locLower.includes('dadar')) prefix = 'DAD';
+        else if (locLower.includes('bandra')) prefix = 'BAN';
+        else prefix = (location.replace(/[^a-zA-Z]/g, '') || 'MUM').slice(0, 3).toUpperCase();
+
+        let zoneChar = 'E';
+        const zoneLower = (req.body.zone || '').toLowerCase();
+        if (zoneLower.startsWith('w') || zoneLower.includes('west')) zoneChar = 'W';
+        else if (zoneLower.startsWith('c') || zoneLower.includes('central') || zoneLower.includes('midc')) zoneChar = 'C';
+        else zoneChar = 'E';
+
+        const totalCust = await prisma.customer.count();
+        const yearSeq = '26';
+        const seqNum = (totalCust + 1).toString().padStart(2, '0');
+        customerNo = `${prefix}${zoneChar}${yearSeq}${seqNum}`;
+      }
 
       // Password Hash (default to 'customer123' if not specified)
       const passwordHash = await bcrypt.hash(password || 'customer123', 12);

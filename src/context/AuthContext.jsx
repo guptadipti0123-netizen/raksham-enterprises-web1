@@ -344,9 +344,39 @@ export function AuthProvider({ children }) {
       console.warn('Backend offline, registered locally:', e.message);
     }
 
-    const locPrefix = (data.location || 'MUM').slice(0, 3).toUpperCase();
-    const rand = Math.floor(1000 + Math.random() * 9000);
-    const newCustomerNo = `${locPrefix}${rand}`;
+    let newCustomerNo = data.customId;
+    if (!newCustomerNo) {
+      let prefix = 'MUM';
+      const locLower = (data.location || '').toLowerCase();
+      if (locLower.includes('chembur')) prefix = 'CHE';
+      else if (locLower.includes('ghatkopar')) prefix = 'GHA';
+      else if (locLower.includes('andheri')) prefix = 'AND';
+      else if (locLower.includes('sakinaka')) prefix = 'SAK';
+      else if (locLower.includes('vikhroli')) prefix = 'VIK';
+      else if (locLower.includes('kurla')) prefix = 'KUR';
+      else if (locLower.includes('powai')) prefix = 'POW';
+      else if (locLower.includes('mulund')) prefix = 'MUL';
+      else if (locLower.includes('bhandup')) prefix = 'BHA';
+      else if (locLower.includes('wadala')) prefix = 'WAD';
+      else if (locLower.includes('govandi')) prefix = 'GOV';
+      else if (locLower.includes('mankhurd')) prefix = 'MAN';
+      else if (locLower.includes('ulwe')) prefix = 'ULV';
+      else if (locLower.includes('navi') || locLower.includes('vashi') || locLower.includes('nerul')) prefix = 'NAV';
+      else if (locLower.includes('thane')) prefix = 'THA';
+      else if (locLower.includes('dadar')) prefix = 'DAD';
+      else if (locLower.includes('bandra')) prefix = 'BAN';
+      else prefix = (data.location?.replace(/[^a-zA-Z]/g, '') || 'MUM').slice(0, 3).toUpperCase();
+
+      let zoneChar = 'E';
+      const zoneLower = (data.zone || '').toLowerCase();
+      if (zoneLower.startsWith('w') || zoneLower.includes('west')) zoneChar = 'W';
+      else if (zoneLower.startsWith('c') || zoneLower.includes('central') || zoneLower.includes('midc')) zoneChar = 'C';
+      else zoneChar = 'E';
+
+      const yearSeq = '26';
+      const seqNum = ((customers?.length || 0) + 1).toString().padStart(2, '0');
+      newCustomerNo = `${prefix}${zoneChar}${yearSeq}${seqNum}`;
+    }
 
     const newCust = {
       id: `CUST-${Date.now().toString().slice(-4)}`,
