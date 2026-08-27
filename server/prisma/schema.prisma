@@ -1,3 +1,8 @@
+// =========================================================================
+// RAKSHAM ENTERPRISES - RELATIONAL DATABASE SCHEMA (PRISMA ORM)
+// Database Engine: MySQL (Local Development & Production Compatible)
+// =========================================================================
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -7,10 +12,20 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// -------------------------------------------------------------------------
+// ENUMS
+// -------------------------------------------------------------------------
+
 enum UserRole {
   ADMIN
   TECHNICIAN
   CUSTOMER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
 }
 
 enum AmcStatus {
@@ -24,41 +39,76 @@ enum AmcStatus {
 enum ServiceRequestType {
   AMC_PRIORITY
   NON_AMC_PAID
+  BREAKDOWN_REPAIR
+  ROUTINE_INSPECTION
+}
+
+enum PriorityLevel {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
 }
 
 enum ServiceRequestStatus {
-  REQUEST_RECEIVED
-  CUSTOMER_VERIFIED
-  TECHNICIAN_ASSIGNED
-  APPOINTMENT_CONFIRMED
-  TECHNICIAN_ON_WAY
+  PENDING
+  ASSIGNED
   IN_PROGRESS
   ESTIMATE_SENT
   COMPLETED
-  CUSTOMER_CONFIRMED
   CLOSED
   CANCELLED
+}
+
+enum ServiceReportStatus {
+  DRAFT
+  COMPLETED
+  CANCELLED
+}
+
+enum InspectionStatus {
+  OK
+  NOT_OK
+  PENDING
+  NOT_APPLICABLE
 }
 
 enum EnquiryStatus {
   NEW
   CONTACTED
-  SURVEY_SCHEDULED
+  IN_PROGRESS
   CONVERTED
   CLOSED
 }
 
-// 1. Users & Authentication
+enum EquipmentType {
+  CCTV_CAMERA
+  DVR
+  NVR
+  HDD
+  ACCESS_CONTROL
+  FIRE_ALARM
+  BIOMETRIC
+  VIDEO_DOOR_PHONE
+  INTERCOM
+  NETWORK_SWITCH
+  POWER_SUPPLY
+  OTHER
+}
+
+// -------------------------------------------------------------------------
+// 1. USERS & AUTHENTICATION
+// -------------------------------------------------------------------------
 model User {
-  id            String         @id @default(uuid())
-  email         String?        @unique
-  phone         String?        @unique
-  passwordHash  String
-  role          UserRole       @default(CUSTOMER)
-  name          String
-  isActive      Boolean        @default(true)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id           String        @id @default(uuid())
+  name         String
+  email        String?       @unique
+  mobile       String?       @unique
+  passwordHash String        // bcrypt/argon2 hashed
+  role         UserRole      @default(CUSTOMER)
+  status       UserStatus    @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   customer      Customer?
   technician    Technician?
@@ -68,281 +118,361 @@ model User {
   @@map("users")
 }
 
-// 2. Customers (Housing Societies, Offices, Commercial Clients)
+// -------------------------------------------------------------------------
+// 2. CUSTOMERS (Housing Societies, Commercial Buildings, Residential Sites)
+// -------------------------------------------------------------------------
 model Customer {
-  id            String            @id @default(uuid())
-  userId        String?           @unique
-  user          User?             @relation(fields: [userId], references: [id], onDelete: SetNull)
-  customerNo    String            @unique // e.g. 'ULV2601', 'CHE4819'
-  name          String            // e.g. 'Silver Springs Residency CHS'
-  contactPerson String?
-  contactPhone  String
-  email         String?
-  address       String            @db.Text
-  location      String            @default("Mumbai")
-  amcStatus     AmcStatus         @default(ACTIVE)
-  amcType       String            @default("Comprehensive Shield AMC")
-  amcExpiry     DateTime?
-  camerasCount  Int               @default(8)
-  nvrDetails    String?           @default("Hikvision / CP Plus NVR 16CH")
-  hddsDetails   String?           @default("4TB Surveillance HDD")
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
+  id             String        @id @default(uuid())
+  userId         String?       @unique
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  customerName   String        // e.g. 'Silver Springs Residency CHS'
+  customerNumber String        @unique // e.g. 'ULV2601', 'CHEE2601'
+  contactPerson  String?       // e.g. 'Mr. Deepak Sharma (Secretary)'
+  contactNumber  String        // e.g. '+91 9867890606'
+  email          String?
+  siteAddress    String        @db.Text
+  city           String        @default("Mumbai")
+  state          String        @default("Maharashtra")
+  pincode        String?
+  status         AmcStatus     @default(ACTIVE)
+  notes          String?       @db.Text
+  
+  // Quick Summary Fields
+  camerasCount   Int           @default(8)
+  amcType        String?       @default("Comprehensive Shield AMC")
+  amcExpiry      DateTime?
+  
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   serviceRequests ServiceRequest[]
   serviceReports  ServiceReport[]
   equipment       Equipment[]
   amcContracts    AmcContract[]
 
-  @@index([customerNo])
-  @@index([contactPhone])
+  @@index([customerNumber])
+  @@index([contactNumber])
+  @@index([city])
   @@map("customers")
 }
 
-// 3. Technicians (Field Security Engineers)
+// -------------------------------------------------------------------------
+// 3. TECHNICIANS (Field Engineers & Hub Technicians)
+// -------------------------------------------------------------------------
 model Technician {
-  id             String           @id @default(uuid())
-  userId         String?          @unique
-  user           User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
-  name           String           // e.g. 'Rakesh Toraskar'
+  id             String        @id @default(uuid())
+  userId         String?       @unique
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  name           String        // e.g. 'Rakesh Toraskar'
   phone          String
   email          String?
-  specialization String           @default("CCTV & IP Networking Specialist")
-  hub            String           @default("Central Mumbai Hub")
-  isActive       Boolean          @default(true)
-  createdAt      DateTime         @default(now())
+  specialization String        @default("CCTV & IP Networking Specialist")
+  hub            String        @default("Central Mumbai Hub")
+  status         UserStatus    @default(ACTIVE)
+  
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
 
   serviceRequests ServiceRequest[]
   serviceReports  ServiceReport[]
+  amcServices     AmcService[]
 
   @@map("technicians")
 }
 
-// 4. Enquiries (Website Contact & Free Survey Submissions)
+// -------------------------------------------------------------------------
+// 4. ENQUIRIES (Website Contact & Survey Submissions)
+// -------------------------------------------------------------------------
 model Enquiry {
   id              String        @id @default(uuid())
-  enquiryNo       String        @unique // e.g. 'ENQ-4821'
+  enquiryNumber   String        @unique // e.g. 'ENQ-4821'
   name            String
   mobile          String
   email           String?
   location        String        @default("Mumbai")
-  propertyType    String        @default("Residential Society")
   serviceRequired String        @default("CCTV Installation")
   message         String?       @db.Text
   status          EnquiryStatus @default(NEW)
+  
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
   @@index([mobile])
+  @@index([status])
   @@map("enquiries")
 }
 
-// 5. Service Requests (AMC Priority & Non-AMC Paid Repairs)
+// -------------------------------------------------------------------------
+// 5. SERVICE REQUESTS (AMC Priority Complaints & Non-AMC Paid Tickets)
+// -------------------------------------------------------------------------
 model ServiceRequest {
-  id                String               @id @default(uuid())
-  ticketNo          String               @unique // e.g. 'AMC-20260825-412' or 'NAC-20260825-001'
-  customerId        String?
-  customer          Customer?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  customerName      String
-  contactPhone      String?
-  location          String?
-  serviceType       ServiceRequestType   @default(AMC_PRIORITY)
-  issueType         String
-  priority          String               @default("High (AMC Priority Queue)")
-  status            ServiceRequestStatus @default(REQUEST_RECEIVED)
-  reportedDate      DateTime             @default(now())
-  technicianId      String?
-  technician        Technician?          @relation(fields: [technicianId], references: [id], onDelete: SetNull)
-  technicianName    String?              @default("Assigned Soon")
-  technicianPhone   String?              @default("+91 90291 14205")
-  scheduledTime     String?              @default("Within 4 Hours (AMC SLA)")
-  visitCharge       Decimal              @default(0.00) @db.Decimal(10, 2)
-  estimateParts     Json?                // JSON array of spare parts quoted
-  estimateStatus    String?              @default("Pending") // 'Pending', 'Approved', 'Declined'
-  customerConfirmed Boolean              @default(false)
-  notes             String?              @db.Text
-  createdAt         DateTime             @default(now())
-  updatedAt         DateTime             @updatedAt
+  id                   String               @id @default(uuid())
+  requestNumber        String               @unique // e.g. 'AMC-20260825-412' or 'NAC-20260825-001'
+  customerId           String?
+  customer             Customer?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  
+  customerName         String
+  contactNumber        String?
+  location             String?
+  
+  assignedTechnicianId String?
+  technician           Technician?          @relation(fields: [assignedTechnicianId], references: [id], onDelete: SetNull)
+  technicianName       String?              @default("Assigned Soon")
+  technicianPhone      String?              @default("+91 90291 14205")
+  
+  serviceType          ServiceRequestType   @default(AMC_PRIORITY)
+  complaint            String               @db.Text
+  priority             PriorityLevel        @default(HIGH)
+  status               ServiceRequestStatus @default(PENDING)
+  
+  scheduledDate        DateTime?
+  completedDate        DateTime?
+  visitCharge          Decimal              @default(0.00) @db.Decimal(10, 2)
+  
+  estimateParts        Json?                // Quoted spare parts list
+  estimateStatus       String?              @default("Pending")
+  customerConfirmed    Boolean              @default(false)
+  notes                String?              @db.Text
+  
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
 
-  serviceReports    ServiceReport[]
+  serviceReports       ServiceReport[]
 
-  @@index([ticketNo])
+  @@index([requestNumber])
   @@index([customerId])
+  @@index([status])
   @@map("service_requests")
 }
 
-// 6. CCTV Service Reports (Raksham Verified PDF 1 Inspection Document)
+// -------------------------------------------------------------------------
+// 6. SERVICE REPORTS (Raksham CCTV Service Report - PDF 1 Verification)
+// -------------------------------------------------------------------------
 model ServiceReport {
-  id                     String           @id @default(uuid())
-  reportId               String           @unique // e.g. 'REP-2026-0824'
-  jobNo                  String           // e.g. 'JOB-9021'
-  customerId             String?
-  customer               Customer?        @relation(fields: [customerId], references: [id], onDelete: SetNull)
-  customerName           String
-  siteAddress            String           @db.Text
-  contactPerson          String?
-  contactNumber          String?
-  serviceRequestId       String?
-  serviceRequest         ServiceRequest?  @relation(fields: [serviceRequestId], references: [id], onDelete: SetNull)
-  technicianId           String?
-  technician             Technician?      @relation(fields: [technicianId], references: [id], onDelete: SetNull)
-  technicianName         String           @default("Rakesh Toraskar")
-  serviceType            String           @default("Quarterly AMC Preventive Checkup")
-  visitDate              DateTime         @default(now())
-  complaintDetails       String?          @db.Text
+  id                   String              @id @default(uuid())
+  reportNumber         String              @unique // e.g. 'REP-2026-0824'
+  jobNo                String?             // e.g. 'JOB-9021'
+  
+  customerId           String?
+  customer             Customer?           @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerName         String
+  customerNumber       String?
+  siteAddress          String              @db.Text
+  contactPerson        String?
+  contactNumber        String?
+  
+  serviceRequestId     String?
+  serviceRequest       ServiceRequest?     @relation(fields: [serviceRequestId], references: [id], onDelete: SetNull)
+  
+  technicianId         String?
+  technician           Technician?         @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+  technicianName       String              @default("Rakesh Toraskar")
+  
+  serviceDate          DateTime            @default(now())
+  complaint            String?             @db.Text
+  serviceType          String              @default("Quarterly AMC Preventive Checkup")
   
   // Equipment Details
-  systemType             String?          @default("HD IP Surveillance Network")
-  brand                  String?          @default("Hikvision / CP Plus")
-  modelNo                String?          @default("DS-7616NI-Q2 / NVR 16CH")
-  serialNo               String?          @default("SN-HK8921-2024")
-  noOfCameras            Int              @default(14)
-  otherEquipment         String?          @default("PoE Switch 16-Port Gigabit, 4TB HDD")
+  systemType           String?             @default("HD IP Surveillance Network")
+  brand                String?             @default("Hikvision / CP Plus")
+  model                String?             @default("DS-7616NI-Q2 / NVR 16CH")
+  serialNumber         String?             @default("SN-HK8921-2024")
+  numberOfCameras      Int                 @default(14)
+  otherEquipment       String?             @default("PoE Switch 16-Port Gigabit, 4TB HDD")
   
-  // Observations & Actions
-  problemObserved        String?          @db.Text
-  workCarriedOut         String?          @db.Text
+  // Problem Observed & Work Carried Out
+  problemObserved      String?             @db.Text
+  workCarriedOut       String?             @db.Text
   
-  // 7-Point System Inspection Checklist
-  systemHealth           String           @default("100% Operational")
-  cctvHddStatus          String           @default("Healthy (Recording Active)")
-  nvrFirmwareStatus      String           @default("Up to date")
-  networkConnectivity    String           @default("Active (Static IP Online)")
-  powerSupplyStatus      String           @default("12V SMPS Voltage Stable")
-  recordingStatus        String           @default("Continuous 24x7 Active (30 Days)")
-  remoteViewingStatus    String           @default("Hik-Connect Mobile Online")
-  cameraAlignmentStatus  String           @default("All Angles Cleaned & Focused")
+  // 8-Point CCTV System Inspection Checklist
+  cctvHdd              InspectionStatus    @default(OK)
+  dvrFirmware          InspectionStatus    @default(OK)
+  networkConnectivity  InspectionStatus    @default(OK)
+  powerSupply          InspectionStatus    @default(OK)
+  recording            InspectionStatus    @default(OK)
+  remoteViewing        InspectionStatus    @default(OK)
+  cameraAlignment      InspectionStatus    @default(OK)
+  cameraLensCleaning   InspectionStatus    @default(OK)
+  inspectionRemarks    String?             @default("All 8 inspection checks operational and verified")
   
-  // Remarks & Confirmations
-  technicianRemarks      String?          @db.Text
-  customerRemarks        String?          @db.Text
-  customerConfirmed      Boolean          @default(true)
-  technicianSignatureKey String?          // S3 Key for signature image
-  customerSignatureKey   String?          // S3 Key for customer signature image
+  // Remarks & Sign-off
+  technicianRemarks    String?             @db.Text
+  customerRemarks      String?             @db.Text
+  customerConfirmed    Boolean             @default(true)
+  customerSignature    String?             // Signature reference or data URI
+  technicianSignature  String?             // Signature reference or data URI
   
-  // S3 Generated PDF Reference
-  pdfS3Key               String?          // e.g. 'raksham/service-reports/REP-2026-0824.pdf'
-  pdfUrl                 String?          @db.Text
+  // PDF Document File Storage Reference (Local / S3)
+  pdfFilePath          String?             // e.g. 'uploads/service-reports/REP-2026-0824.pdf'
+  pdfUrl               String?             @db.Text
   
-  createdAt              DateTime         @default(now())
-  updatedAt              DateTime         @updatedAt
+  status               ServiceReportStatus @default(COMPLETED)
+  
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
 
-  items                  ServiceReportItem[]
-  photos                 ServiceReportPhoto[]
-  amcServices            AmcService[]
+  items                ServiceReportItem[]
+  photos               ServiceReportPhoto[]
+  amcServices          AmcService[]
 
-  @@index([reportId])
+  @@index([reportNumber])
   @@index([customerId])
+  @@index([status])
   @@map("service_reports")
 }
 
-// 7. Service Report Items (Parts / Materials Used Table)
+// -------------------------------------------------------------------------
+// 7. SERVICE REPORT ITEMS (Parts / Materials Used Table)
+// -------------------------------------------------------------------------
 model ServiceReportItem {
   id              String        @id @default(uuid())
   serviceReportId String
   serviceReport   ServiceReport @relation(fields: [serviceReportId], references: [id], onDelete: Cascade)
-  itemNo          Int           @default(1)
+  
+  itemNumber      Int           @default(1)
   description     String        // e.g. 'BNC Connector Gold Plated' or '12V 5A Power Adapter'
-  qty             Int           @default(1)
+  quantity        Int           @default(1)
   remarks         String?       @default("Replaced under AMC Warranty")
 
   @@map("service_report_items")
 }
 
-// 8. Service Report Photos (S3 Stored Inspection Evidence)
+// -------------------------------------------------------------------------
+// 8. SERVICE REPORT PHOTOS (Inspection Evidence Photos)
+// -------------------------------------------------------------------------
 model ServiceReportPhoto {
   id              String        @id @default(uuid())
   serviceReportId String
   serviceReport   ServiceReport @relation(fields: [serviceReportId], references: [id], onDelete: Cascade)
-  s3Key           String        // e.g. 'raksham/service-photos/photo_123.jpg'
-  caption         String?       // e.g. 'DVR Rack after cleaning'
+  
+  fileName        String
+  filePath        String        // Local path or future S3 Key
+  fileType        String?       @default("image/jpeg")
+  uploadedBy      String?       @default("Technician")
+  caption         String?       @default("Site inspection photo")
+  
   createdAt       DateTime      @default(now())
 
   @@map("service_report_photos")
 }
 
-// 9. Equipment Inventory (CCTV Cameras, NVRs, Routers, Biometrics)
+// -------------------------------------------------------------------------
+// 9. EQUIPMENT (CCTV, NVR, Biometrics, Intercom, Fire Alarms Inventory)
+// -------------------------------------------------------------------------
 model Equipment {
-  id             String    @id @default(uuid())
-  customerId     String
-  customer       Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  systemType     String    // 'IP CCTV', 'HD Analog CCTV', 'Biometric Access', 'Video Door Phone'
-  brand          String    // 'Hikvision', 'CP Plus', 'Dahua', 'Matrix'
-  model          String?
-  serialNo       String?
-  cameraCount    Int       @default(8)
-  locationTag    String?   // 'Main Gate, Lobby, Lift, Parking'
-  installDate    DateTime?
-  warrantyExpiry DateTime?
-  createdAt      DateTime  @default(now())
+  id               String        @id @default(uuid())
+  customerId       String
+  customer         Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  systemType       EquipmentType @default(CCTV_CAMERA)
+  brand            String        // 'Hikvision', 'CP Plus', 'Dahua', 'Matrix'
+  model            String?
+  serialNumber     String?
+  quantity         Int           @default(1)
+  installationDate DateTime?
+  status           String        @default("Operational") // 'Operational', 'Under Maintenance', 'Replaced'
+  notes            String?       @db.Text
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
   @@index([customerId])
   @@map("equipment")
 }
 
-// 10. AMC Contracts (Comprehensive & Non-Comprehensive Shield Contracts)
+// -------------------------------------------------------------------------
+// 10. AMC CONTRACTS (CCTV Annual Maintenance Contracts)
+// -------------------------------------------------------------------------
 model AmcContract {
-  id              String       @id @default(uuid())
-  customerId      String
-  customer        Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
-  planName        String       @default("Comprehensive Shield AMC")
-  startDate       DateTime
-  endDate         DateTime
-  frequency       String       @default("Quarterly (4 Preventive Visits/Year)")
-  nextServiceDate DateTime?
-  status          AmcStatus    @default(ACTIVE)
-  notes           String?      @db.Text
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  id               String        @id @default(uuid())
+  customerId       String
+  customer         Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  contractNumber   String        @unique // e.g. 'AMC-2025-081'
+  planName         String        @default("Comprehensive Shield AMC")
+  startDate        DateTime
+  endDate          DateTime
+  serviceFrequency String        @default("Quarterly (4 Preventive Visits/Year)")
+  nextServiceDate  DateTime?
+  status           AmcStatus     @default(ACTIVE)
+  notes            String?       @db.Text
+  
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
-  amcServices     AmcService[]
+  amcServices      AmcService[]
 
   @@index([customerId])
+  @@index([status])
   @@map("amc_contracts")
 }
 
-// 11. Scheduled AMC Preventive Visits
+// -------------------------------------------------------------------------
+// 11. AMC SERVICES (Preventive Visit History & Execution)
+// -------------------------------------------------------------------------
 model AmcService {
-  id              String         @id @default(uuid())
-  amcContractId   String
-  amcContract     AmcContract    @relation(fields: [amcContractId], references: [id], onDelete: Cascade)
-  quarter         String         // 'Q1 - March', 'Q2 - June', 'Q3 - September', 'Q4 - December'
-  scheduledDate   DateTime
-  completedDate   DateTime?
-  serviceReportId String?
-  serviceReport   ServiceReport? @relation(fields: [serviceReportId], references: [id], onDelete: SetNull)
-  status          String         @default("Scheduled") // 'Scheduled', 'Completed', 'Overdue'
-  createdAt       DateTime       @default(now())
+  id               String         @id @default(uuid())
+  amcContractId    String
+  amcContract      AmcContract    @relation(fields: [amcContractId], references: [id], onDelete: Cascade)
+  
+  serviceReportId  String?
+  serviceReport    ServiceReport? @relation(fields: [serviceReportId], references: [id], onDelete: SetNull)
+  
+  serviceDate      DateTime
+  technicianId     String?
+  technician       Technician?    @relation(fields: [technicianId], references: [id], onDelete: SetNull)
+  
+  workPerformed    String?        @db.Text
+  inspectionResult String?        @default("All 8 Points Passed")
+  remarks          String?        @db.Text
+  nextServiceDate  DateTime?
+  status           String         @default("Completed") // 'Scheduled', 'Completed', 'Overdue'
+  
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
 
   @@map("amc_services")
 }
 
-// 12. In-App & SMS/WhatsApp Notifications
+// -------------------------------------------------------------------------
+// 12. NOTIFICATIONS (In-App, SMS, WhatsApp Alert Tracking)
+// -------------------------------------------------------------------------
 model Notification {
   id        String   @id @default(uuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
   title     String
   message   String   @db.Text
   isRead    Boolean  @default(false)
   type      String   @default("TICKET_UPDATE") // 'TICKET_UPDATE', 'AMC_REMINDER', 'REPORT_READY'
+  
   createdAt DateTime @default(now())
 
   @@index([userId])
   @@map("notifications")
 }
 
-// 13. Audit Logs (Security & Compliance Tracking)
+// -------------------------------------------------------------------------
+// 13. AUDIT LOGS (Security, Admin & Compliance Activity Trail)
+// -------------------------------------------------------------------------
 model AuditLog {
-  id        String   @id @default(uuid())
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  action    String   // 'LOGIN_SUCCESS', 'CUSTOMER_CREATED', 'REPORT_GENERATED', 'ESTIMATE_APPROVED'
-  resource  String   // 'auth', 'customers', 'service-reports'
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  action      String   // 'ADMIN_CREATED_CUSTOMER', 'ADMIN_UPDATED_AMC', 'TECHNICIAN_COMPLETED_SERVICE', 'SERVICE_REPORT_CREATED'
+  entity      String   // 'customers', 'service_requests', 'service_reports', 'amc_contracts'
+  entityId    String?
+  description String?  @db.Text
+  ipAddress   String?  @default("127.0.0.1")
+  
+  timestamp   DateTime @default(now())
 
   @@index([userId])
+  @@index([action])
+  @@index([entity])
   @@map("audit_logs")
 }

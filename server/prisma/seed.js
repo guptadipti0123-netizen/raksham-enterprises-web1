@@ -1,12 +1,12 @@
-import { PrismaClient, UserRole, AmcStatus, ServiceRequestType, ServiceRequestStatus, EnquiryStatus } from '@prisma/client';
+import { PrismaClient, UserRole, UserStatus, AmcStatus, ServiceRequestType, PriorityLevel, ServiceRequestStatus, ServiceReportStatus, InspectionStatus, EnquiryStatus, EquipmentType } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting Raksham Enterprises database seed...');
+  console.log('🌱 Starting Raksham Enterprises Local Database Seed...');
 
-  // 1. Password Hashes
+  // 1. Password Hashes (Dummy / Development Test Passwords)
   const adminPasswordHash = await bcrypt.hash('admin123', 12);
   const techPasswordHash = await bcrypt.hash('tech123', 12);
   const customerPasswordHash = await bcrypt.hash('customer123', 12);
@@ -16,12 +16,12 @@ async function main() {
     where: { email: 'admin@raksham.com' },
     update: {},
     create: {
+      name: 'Raksham Operations Admin',
       email: 'admin@raksham.com',
-      phone: '+91 9867890606',
+      mobile: '+91 9867890606',
       passwordHash: adminPasswordHash,
       role: UserRole.ADMIN,
-      name: 'Raksham Operations Admin',
-      isActive: true
+      status: UserStatus.ACTIVE
     }
   });
   console.log('✅ Admin user created:', adminUser.email);
@@ -31,12 +31,12 @@ async function main() {
     where: { email: 'tech@raksham.com' },
     update: {},
     create: {
+      name: 'Rakesh Toraskar',
       email: 'tech@raksham.com',
-      phone: '+91 90291 14205',
+      mobile: '+91 90291 14205',
       passwordHash: techPasswordHash,
       role: UserRole.TECHNICIAN,
-      name: 'Rakesh Toraskar',
-      isActive: true,
+      status: UserStatus.ACTIVE,
       technician: {
         create: {
           name: 'Rakesh Toraskar',
@@ -44,213 +44,239 @@ async function main() {
           email: 'tech@raksham.com',
           specialization: 'Senior CCTV & IP Networking Engineer',
           hub: 'Central Mumbai & Navi Mumbai Hub',
-          isActive: true
+          status: UserStatus.ACTIVE
         }
       }
     },
     include: { technician: true }
   });
-  console.log('✅ Technician user created:', techUser.name);
+  const technician = techUser.technician;
+  console.log('✅ Technician user created:', technician.name);
 
-  // 4. Seed Primary Customer User & Profile (Silver Springs Residency)
+  // 4. Seed Primary Customer User & Profile (Silver Springs Residency CHS)
   const customerUser = await prisma.user.upsert({
     where: { email: 'contact@silversprings.com' },
     update: {},
     create: {
+      name: 'Silver Springs Residency CHS',
       email: 'contact@silversprings.com',
-      phone: '+91 9867890606',
+      mobile: '+91 9867890606',
       passwordHash: customerPasswordHash,
       role: UserRole.CUSTOMER,
-      name: 'Silver Springs Residency CHS',
-      isActive: true,
+      status: UserStatus.ACTIVE,
       customer: {
         create: {
-          customerNo: 'ULV2601',
-          name: 'Silver Springs Residency CHS',
+          customerName: 'Silver Springs Residency CHS',
+          customerNumber: 'ULV2601',
           contactPerson: 'Mr. Deepak Sharma (Secretary)',
-          contactPhone: '+91 9867890606',
+          contactNumber: '+91 9867890606',
           email: 'contact@silversprings.com',
-          address: 'Plot 42, Sector 19, Ulwe, Navi Mumbai, Maharashtra 410206',
-          location: 'Ulwe (Navi Mumbai)',
-          amcStatus: AmcStatus.ACTIVE,
+          siteAddress: 'Plot 42, Sector 19, Ulwe, Navi Mumbai, Maharashtra 410206',
+          city: 'Navi Mumbai',
+          state: 'Maharashtra',
+          pincode: '410206',
+          status: AmcStatus.ACTIVE,
           amcType: 'Comprehensive Shield AMC',
           amcExpiry: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
           camerasCount: 14,
-          nvrDetails: 'Hikvision 16-Channel 4K NVR (DS-7616NI-Q2)',
-          hddsDetails: 'Seagate SkyHawk 4TB Surveillance HDD'
+          notes: 'Premier housing society with 14 IP CCTV cameras, 16CH NVR and 4TB HDD under comprehensive AMC.'
         }
       }
     },
     include: { customer: true }
   });
   const customer = customerUser.customer;
-  console.log('✅ Customer created:', customer.name, `(${customer.customerNo})`);
+  console.log('✅ Customer created:', customer.customerName, `(${customer.customerNumber})`);
 
-  // 5. Seed Customer Equipment
+  // 5. Seed Customer Equipment Inventory
   await prisma.equipment.createMany({
     data: [
       {
         customerId: customer.id,
-        systemType: 'IP CCTV Cameras (Bullet)',
+        systemType: EquipmentType.CCTV_CAMERA,
         brand: 'Hikvision',
-        model: 'DS-2CD1023G0E-I (2MP Full HD)',
-        serialNo: 'HK-CAM-88910',
-        cameraCount: 10,
-        locationTag: 'Main Gate, Perimeter Walls, Parking Level 1 & 2',
-        installDate: new Date('2024-01-15'),
-        warrantyExpiry: new Date('2026-01-15')
+        model: 'DS-2CD1023G0E-I (2MP Full HD Bullet)',
+        serialNumber: 'HK-CAM-88910',
+        quantity: 10,
+        status: 'Operational',
+        installationDate: new Date('2024-01-15'),
+        notes: 'Main Gate, Perimeter Walls, Parking Level 1 & 2'
       },
       {
         customerId: customer.id,
-        systemType: 'IP CCTV Cameras (Dome)',
+        systemType: EquipmentType.CCTV_CAMERA,
         brand: 'Hikvision',
         model: 'DS-2CD1123G0E-I (2MP Vandal Dome)',
-        serialNo: 'HK-CAM-99214',
-        cameraCount: 4,
-        locationTag: 'Building Entrance Lobby, Lift Cabins A & B',
-        installDate: new Date('2024-01-15'),
-        warrantyExpiry: new Date('2026-01-15')
+        serialNumber: 'HK-CAM-99214',
+        quantity: 4,
+        status: 'Operational',
+        installationDate: new Date('2024-01-15'),
+        notes: 'Building Entrance Lobby, Lift Cabins A & B'
       },
       {
         customerId: customer.id,
-        systemType: 'Network Video Recorder (NVR)',
+        systemType: EquipmentType.NVR,
         brand: 'Hikvision',
-        model: 'DS-7616NI-Q2 (16 Channel 4K)',
-        serialNo: 'NVR-HK8921-2024',
-        cameraCount: 16,
-        locationTag: 'Society Security Control Room Rack',
-        installDate: new Date('2024-01-15'),
-        warrantyExpiry: new Date('2027-01-15')
+        model: 'DS-7616NI-Q2 (16 Channel 4K NVR)',
+        serialNumber: 'NVR-HK8921-2024',
+        quantity: 1,
+        status: 'Operational',
+        installationDate: new Date('2024-01-15'),
+        notes: 'Society Security Control Room Rack with 4TB SkyHawk HDD'
       }
     ],
     skipDuplicates: true
   });
-  console.log('✅ Customer equipment seeded');
+  console.log('✅ Customer equipment seeded (3 Hardware Records)');
 
-  // 6. Seed AMC Contract & Schedule
-  const amcContract = await prisma.amcContract.create({
-    data: {
+  // 6. Seed AMC Contract
+  const amcContract = await prisma.amcContract.upsert({
+    where: { contractNumber: 'AMC-2025-081' },
+    update: {},
+    create: {
       customerId: customer.id,
+      contractNumber: 'AMC-2025-081',
       planName: 'Comprehensive Shield AMC (14 Cameras)',
       startDate: new Date('2025-01-01'),
       endDate: new Date('2026-12-31'),
-      frequency: 'Quarterly (4 Preventive Checkups / Year)',
+      serviceFrequency: 'Quarterly (4 Preventive Visits / Year)',
       nextServiceDate: new Date(new Date().setDate(new Date().getDate() + 45)),
       status: AmcStatus.ACTIVE,
       notes: 'Includes free emergency breakdown repair within 4 hours, spare parts coverage, quarterly lens cleaning, and HDD health audits.'
     }
   });
+  console.log('✅ AMC Contract seeded:', amcContract.contractNumber);
 
-  // 7. Seed Sample Service Report (Matching PDF 1 Requirements)
-  await prisma.serviceReport.upsert({
-    where: { reportId: 'REP-2026-0824' },
+  // 7. Seed Service Request (AMC Priority Ticket)
+  const serviceRequest = await prisma.serviceRequest.upsert({
+    where: { requestNumber: 'AMC-20260825-412' },
     update: {},
     create: {
-      reportId: 'REP-2026-0824',
+      requestNumber: 'AMC-20260825-412',
+      customerId: customer.id,
+      customerName: customer.customerName,
+      contactNumber: customer.contactNumber,
+      location: customer.city,
+      assignedTechnicianId: technician.id,
+      technicianName: technician.name,
+      technicianPhone: technician.phone,
+      serviceType: ServiceRequestType.AMC_PRIORITY,
+      complaint: 'Camera 4 (Lift A) flickering footage reported. Routine quarterly preventive checkup.',
+      priority: PriorityLevel.HIGH,
+      status: ServiceRequestStatus.COMPLETED,
+      scheduledDate: new Date(),
+      completedDate: new Date(),
+      visitCharge: 0.00,
+      customerConfirmed: true,
+      notes: 'Technician dispatched from Central Mumbai Hub. SLA response under 2 hours.'
+    }
+  });
+  console.log('✅ Service Request seeded:', serviceRequest.requestNumber);
+
+  // 8. Seed Service Report (Raksham CCTV Service Report - PDF 1 Verification)
+  const serviceReport = await prisma.serviceReport.upsert({
+    where: { reportNumber: 'REP-2026-0824' },
+    update: {},
+    create: {
+      reportNumber: 'REP-2026-0824',
       jobNo: 'JOB-9021',
       customerId: customer.id,
-      customerName: customer.name,
-      siteAddress: customer.address,
+      customerName: customer.customerName,
+      customerNumber: customer.customerNumber,
+      siteAddress: customer.siteAddress,
       contactPerson: customer.contactPerson,
-      contactNumber: customer.contactPhone,
-      technicianName: 'Rakesh Toraskar',
+      contactNumber: customer.contactNumber,
+      serviceRequestId: serviceRequest.id,
+      technicianId: technician.id,
+      technicianName: technician.name,
       serviceType: 'Quarterly AMC Preventive Checkup & Maintenance',
-      visitDate: new Date(),
-      complaintDetails: 'Scheduled Q3 routine preventive checkup. Camera 4 (Lift A) flickering footage reported.',
+      serviceDate: new Date(),
+      complaint: 'Scheduled Q3 routine preventive checkup. Camera 4 (Lift A) flickering footage reported.',
       systemType: 'HD IP Surveillance Network (14 Cameras)',
       brand: 'Hikvision',
-      modelNo: 'DS-7616NI-Q2 (16CH NVR)',
-      serialNo: 'SN-HK8921-2024',
-      noOfCameras: 14,
+      model: 'DS-7616NI-Q2 (16CH NVR)',
+      serialNumber: 'SN-HK8921-2024',
+      numberOfCameras: 14,
       otherEquipment: '16-Port Gigabit PoE Switch, 4TB Seagate SkyHawk HDD',
-      problemObserved: 'RJ45 connector on Lift A camera loose. Lens surface accumulated dust on Main Gate bullet camera.',
-      workCarriedOut: 'Re-crimped RJ45 connector with gold-plated jack. Cleaned all 14 optical lenses. Cleaned NVR cooling fan. Audited 30-day continuous video playback and verified remote mobile streaming.',
-      systemHealth: '100% Operational',
-      cctvHddStatus: 'Healthy (Recording Active)',
-      nvrFirmwareStatus: 'Up to date (v4.32.115)',
-      networkConnectivity: 'Active (Static IP 192.168.1.100 Online)',
-      powerSupplyStatus: '12V 10A Central SMPS Voltage 12.2V Stable',
-      recordingStatus: 'Continuous 24x7 Active (32 Days Playback available)',
-      remoteViewingStatus: 'Hik-Connect Cloud Online (3 Society Admins Connected)',
-      cameraAlignmentStatus: 'All 14 Angles Cleaned, Focused & Aligned',
-      technicianRemarks: 'System operating at peak efficiency. Backup power UPS health verified (35 minutes runtime).',
+      problemObserved: 'RJ45 connector on Lift A camera loose. Optical dust layer on Main Gate bullet camera.',
+      workCarriedOut: 'Re-crimped RJ45 connector with gold-plated jack. Cleaned all 14 optical camera lenses. Cleaned NVR cooling fan. Audited 30-day continuous video playback and verified remote mobile streaming.',
+      
+      // 8-Point Inspection Checklist
+      cctvHdd: InspectionStatus.OK,
+      dvrFirmware: InspectionStatus.OK,
+      networkConnectivity: InspectionStatus.OK,
+      powerSupply: InspectionStatus.OK,
+      recording: InspectionStatus.OK,
+      remoteViewing: InspectionStatus.OK,
+      cameraAlignment: InspectionStatus.OK,
+      cameraLensCleaning: InspectionStatus.OK,
+      inspectionRemarks: 'All 8 CCTV health checks verified and operating at 100% efficiency.',
+      
+      technicianRemarks: 'System operating at peak performance. UPS backup runtime verified (35 minutes).',
       customerRemarks: 'Technician arrived on time. Lift camera issue resolved immediately. Satisfied with maintenance work.',
       customerConfirmed: true,
-      pdfS3Key: 'raksham/service-reports/REP-2026-0824.pdf',
+      customerSignature: 'DIGITALLY_CONFIRMED_BY_SOCIETY_SECRETARY',
+      technicianSignature: 'DIGITALLY_SIGNED_BY_RAKESH_TORASKAR',
+      pdfFilePath: 'uploads/service-reports/REP-2026-0824.pdf',
+      status: ServiceReportStatus.COMPLETED,
+      
       items: {
         create: [
-          { itemNo: 1, description: 'Cat6 RJ45 Modular Connector (Gold Plated)', qty: 2, remarks: 'Replaced under AMC Warranty' },
-          { itemNo: 2, description: 'Camera Lens Optical Cleaning Solution & Microfiber', qty: 1, remarks: 'Quarterly Maintenance' }
+          { itemNumber: 1, description: 'Cat6 RJ45 Modular Connector (Gold Plated)', quantity: 2, remarks: 'Replaced under AMC Warranty' },
+          { itemNumber: 2, description: 'Camera Lens Optical Cleaning Solution & Microfiber', quantity: 1, remarks: 'Quarterly Maintenance' }
         ]
       }
     }
   });
-  console.log('✅ Sample Service Report seeded (REP-2026-0824)');
+  console.log('✅ Service Report seeded:', serviceReport.reportNumber);
 
-  // 8. Seed Service Request (AMC Priority)
-  await prisma.serviceRequest.upsert({
-    where: { ticketNo: 'AMC-20260824-001' },
-    update: {},
-    create: {
-      ticketNo: 'AMC-20260824-001',
-      customerId: customer.id,
-      customerName: customer.name,
-      contactPhone: customer.contactPhone,
-      location: customer.location,
-      serviceType: ServiceRequestType.AMC_PRIORITY,
-      issueType: 'Camera Video Loss (Lift A)',
-      priority: 'High (AMC Priority Queue)',
-      status: ServiceRequestStatus.COMPLETED,
-      technicianName: 'Rakesh Toraskar',
-      technicianPhone: '+91 90291 14205',
-      scheduledTime: 'Within 4 Hours (AMC SLA)',
-      visitCharge: 0.00,
-      customerConfirmed: true
+  // 9. Seed AMC Service Record Linked to Report
+  await prisma.amcService.create({
+    data: {
+      amcContractId: amcContract.id,
+      serviceReportId: serviceReport.id,
+      serviceDate: new Date(),
+      technicianId: technician.id,
+      workPerformed: 'Q3 Preventive Checkup, Lens Cleaning & NVR Health Audit',
+      inspectionResult: 'All 8 Points Passed (100% Operational)',
+      remarks: 'Quarterly routine check completed smoothly.',
+      nextServiceDate: new Date(new Date().setDate(new Date().getDate() + 90)),
+      status: 'Completed'
     }
   });
+  console.log('✅ AMC Service visit history seeded');
 
-  // 9. Seed Non-AMC Request (₹800 Paid Repair)
-  await prisma.serviceRequest.upsert({
-    where: { ticketNo: 'NAC-20260825-001' },
-    update: {},
-    create: {
-      ticketNo: 'NAC-20260825-001',
-      customerName: 'Ghatkopar Electronics Plaza',
-      contactPhone: '+91 98200 44123',
-      location: 'Ghatkopar East, Mumbai',
-      serviceType: ServiceRequestType.NON_AMC_PAID,
-      issueType: 'Blank Screen / DVR Not Powering On',
-      priority: 'Standard (₹800 Paid Visit)',
-      status: ServiceRequestStatus.ESTIMATE_SENT,
-      technicianName: 'Rakesh Toraskar',
-      technicianPhone: '+91 90291 14205',
-      visitCharge: 800.00,
-      estimateParts: [
-        { name: '12V 10A CCTV Power Supply SMPS', qty: 1, cost: 1200 },
-        { name: 'HDMI 4K Display Cable 3 Meter', qty: 1, cost: 450 }
-      ],
-      estimateStatus: 'Pending'
-    }
-  });
-
-  // 10. Seed Sample Enquiries
+  // 10. Seed Sample Website Contact Enquiry
   await prisma.enquiry.upsert({
-    where: { enquiryNo: 'ENQ-2026-101' },
+    where: { enquiryNumber: 'ENQ-4821' },
     update: {},
     create: {
-      enquiryNo: 'ENQ-2026-101',
+      enquiryNumber: 'ENQ-4821',
       name: 'Sunil Mehta (Chairman)',
       mobile: '+91 98201 55678',
       email: 'sunil@greenmeadows.org',
       location: 'Chembur East, Mumbai',
-      propertyType: 'Residential Society (120 Flats)',
       serviceRequired: 'CCTV AMC Shield & Upgrade to 24 Cameras',
       message: 'Need urgent on-site survey for replacing old analog cameras with IP surveillance.',
       status: EnquiryStatus.NEW
     }
   });
+  console.log('✅ Sample Enquiry seeded: ENQ-4821');
 
-  console.log('🎉 Raksham Database Seed Completed Successfully!');
+  // 11. Seed Audit Log Record
+  await prisma.auditLog.create({
+    data: {
+      userId: adminUser.id,
+      action: 'ADMIN_CREATED_CUSTOMER',
+      entity: 'customers',
+      entityId: customer.id,
+      description: 'Seeded initial housing society Silver Springs Residency CHS (ULV2601)',
+      ipAddress: '127.0.0.1'
+    }
+  });
+  console.log('✅ Audit Log seeded');
+
+  console.log('🎉 Local Database Seed Completed Successfully!');
 }
 
 main()
