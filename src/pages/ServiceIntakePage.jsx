@@ -75,7 +75,7 @@ export default function ServiceIntakePage({ onOpenQuote }) {
                   </li>
                   <li className="flex items-center space-x-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
-                    <span>Instant log via Customer Portal (e.g. ULV2601)</span>
+                    <span>Instant priority ticket booking via Customer Portal</span>
                   </li>
                 </ul>
               </div>

@@ -64,7 +64,7 @@ export default function ServiceReportPage() {
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Enter Service Report No. (e.g. RE-20826-2) or Customer ID (e.g. ULV2601)"
+                placeholder="Enter Service Report No. (e.g. RE-20826-2) or Customer ID"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs placeholder:text-slate-400 focus:outline-none focus:border-gold-500 focus:bg-white"

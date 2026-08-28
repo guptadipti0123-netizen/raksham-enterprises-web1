@@ -262,7 +262,7 @@ export default function LoginPage() {
                   <input
                     type="text"
                     required
-                    placeholder="e.g. 9867890606 or ULV2601"
+                    placeholder="Enter your Mobile Number or Customer ID"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold placeholder:text-slate-400 focus:outline-none focus:border-gold-500 focus:bg-white"

@@ -358,9 +358,9 @@ export default function HomePage({ onOpenQuote }) {
               </div>
               <Link
                 to="/login"
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs text-center block transition-colors"
+                className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs text-center block transition-colors"
               >
-                Login with ID (ULV2601) →
+                Customer Login →
               </Link>
             </div>
 
