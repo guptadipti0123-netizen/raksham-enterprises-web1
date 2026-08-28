@@ -66,6 +66,7 @@ export default function LoginPage() {
   const [identifier, setIdentifier] = useState(() => location.state?.registeredId || location.state?.registeredPhone || '');
   const [password, setPassword] = useState('');
   const [adminEmail, setAdminEmail] = useState('');
+  const [adminPin, setAdminPin] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -101,16 +102,28 @@ export default function LoginPage() {
     navigate('/customer/dashboard');
   };
 
-  // Handle Admin Login
+  // Handle Secure Super-Admin Login
   const handleAdminLogin = (e) => {
     e.preventDefault();
     if (!adminEmail.trim() || !password.trim()) {
-      setErrorMessage('Please enter staff email and password');
+      setErrorMessage('Please enter authorized admin email and password.');
       return;
     }
-    setErrorMessage('');
-    loginAsAdmin(password.trim());
-    navigate('/admin/dashboard');
+    if (!adminPin.trim()) {
+      setErrorMessage('Please enter the 6-Digit Master Security PIN.');
+      return;
+    }
+    try {
+      setErrorMessage('');
+      loginAsAdmin({
+        email: adminEmail.trim(),
+        password: password.trim(),
+        pin: adminPin.trim()
+      });
+      navigate('/admin/dashboard');
+    } catch (err) {
+      setErrorMessage(err.message || 'Access Denied: Unrecognized administrator credentials.');
+    }
   };
 
   // Handle Customer Self-Registration
@@ -442,16 +455,26 @@ export default function LoginPage() {
           {/* TAB 3: ADMIN / STAFF LOGIN */}
           {activeTab === 'admin' && (
             <form onSubmit={handleAdminLogin} className="space-y-4">
+              
+              {/* Security Gateway Badge */}
+              <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 flex items-start space-x-2.5">
+                <ShieldCheck className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
+                <div className="text-[11px] text-amber-900 leading-relaxed">
+                  <strong className="block font-bold">Restricted Super-Admin Gateway</strong>
+                  Access is strictly whitelisted for authorized Raksham management with 2-Factor Master Security PIN.
+                </div>
+              </div>
+
               <div>
                 <label className="text-xs font-bold text-slate-700 block mb-1">
-                  Staff Email / Username *
+                  Authorized Admin Email *
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     required
-                    placeholder="e.g. staff@raksham.com"
+                    placeholder="e.g. admin@raksham.com"
                     value={adminEmail}
                     onChange={(e) => setAdminEmail(e.target.value)}
                     className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold placeholder:text-slate-400 focus:outline-none focus:border-gold-500 focus:bg-white"
@@ -461,14 +484,14 @@ export default function LoginPage() {
 
               <div>
                 <label className="text-xs font-bold text-slate-700 block mb-1">
-                  Password *
+                  Administrator Password *
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                   <input
                     type="password"
                     required
-                    placeholder="Enter password"
+                    placeholder="Enter admin password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-semibold placeholder:text-slate-400 focus:outline-none focus:border-gold-500 focus:bg-white"
@@ -476,17 +499,43 @@ export default function LoginPage() {
                 </div>
               </div>
 
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <label className="text-xs font-bold text-slate-700">
+                    6-Digit Master Security PIN *
+                  </label>
+                  <span className="text-[10px] text-amber-800 font-extrabold bg-amber-100 px-2 py-0.5 rounded border border-amber-200">
+                    2FA Security Key
+                  </span>
+                </div>
+                <div className="relative">
+                  <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    maxLength={6}
+                    required
+                    placeholder="•••••• (6-digit PIN)"
+                    value={adminPin}
+                    onChange={(e) => setAdminPin(e.target.value.replace(/[^0-9]/g, ''))}
+                    className="w-full pl-10 pr-3 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-xs font-mono font-bold tracking-widest placeholder:text-slate-400 focus:outline-none focus:border-gold-500 focus:bg-white"
+                  />
+                </div>
+                <span className="text-[10px] text-slate-400 mt-1 block">
+                  Only authorized business owners possessing the 6-digit master security key can log in.
+                </span>
+              </div>
+
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1.5"
+                className="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
               >
-                <span>Login to Operations Desk</span>
+                <span>Authorize & Login to Command Desk</span>
                 <ArrowRight className="w-4 h-4 text-gold-400" />
               </button>
 
               <div className="pt-2 text-center">
                 <span className="text-[10px] text-slate-400">
-                  Authorized personnel and field technicians only.
+                  🔒 Strictly protected with encrypted 2FA and audit tracking.
                 </span>
               </div>
             </form>

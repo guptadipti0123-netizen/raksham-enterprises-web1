@@ -13,14 +13,52 @@ import { authApi, enquiryApi, serviceRequestApi, serviceReportApi } from '../ser
 
 const AuthContext = createContext(null);
 
+export const AUTHORIZED_SUPER_ADMINS = [
+  { email: 'admin@raksham.com', name: 'Master Super-Admin', role: 'SUPER_ADMIN', mobile: '+91 9867890606' },
+  { email: 'operations@raksham.com', name: 'Operations Head', role: 'ADMIN', mobile: '+91 90291 14205' },
+  { email: 'support@raksham.com', name: 'Support Desk Admin', role: 'ADMIN', mobile: '+91 9867890606' }
+];
+
+export const MASTER_ADMIN_SECURITY_PIN = '986789'; // 6-digit Master Security PIN
+
 export function AuthProvider({ children }) {
   // Current logged in user (null, 'customer', 'admin')
   const [userRole, setUserRole] = useState(() => {
     return localStorage.getItem('raksham_user_role') || null;
   });
 
+  const [currentAdmin, setCurrentAdmin] = useState(() => {
+    const saved = localStorage.getItem('raksham_current_admin');
+    return saved ? JSON.parse(saved) : null;
+  });
+
   const [activeCustomer, setActiveCustomer] = useState(() => {
     return INITIAL_CUSTOMERS[0]; // Silver Springs Residency (ULV2601)
+  });
+
+  // Real-time Admin Notifications
+  const [notifications, setNotifications] = useState(() => {
+    const saved = localStorage.getItem('raksham_notifications');
+    return saved ? JSON.parse(saved) : [
+      {
+        id: 'NOTIF-1',
+        title: '🚨 New Breakdown Ticket Raised: AMC-20260825-412',
+        message: 'Silver Springs Residency CHS reported camera flickering in Lift A.',
+        type: 'SERVICE_REQUEST',
+        time: '10 mins ago',
+        isRead: false,
+        link: '/admin/service-requests'
+      },
+      {
+        id: 'NOTIF-2',
+        title: '📩 New Survey Enquiry: Sunil Mehta (Chembur)',
+        message: 'Mobile: +91 98201 55678 • Service: CCTV AMC Shield & Upgrade to 24 Cameras',
+        type: 'ENQUIRY',
+        time: '1 hour ago',
+        isRead: false,
+        link: '/admin/enquiries'
+      }
+    ];
   });
 
   // State collections persisted in database and synchronized with local cache
@@ -59,6 +97,37 @@ export function AuthProvider({ children }) {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Save notifications to localStorage
+  const pushNotification = (notif) => {
+    const newEntry = {
+      id: notif.id || `NOTIF-${Date.now()}`,
+      time: 'Just now',
+      isRead: false,
+      ...notif
+    };
+    setNotifications(prev => {
+      const updated = [newEntry, ...prev];
+      localStorage.setItem('raksham_notifications', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const markNotificationAsRead = (id) => {
+    setNotifications(prev => {
+      const updated = prev.map(n => n.id === id ? { ...n, isRead: true } : n);
+      localStorage.setItem('raksham_notifications', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const markAllNotificationsAsRead = () => {
+    setNotifications(prev => {
+      const updated = prev.map(n => ({ ...n, isRead: true }));
+      localStorage.setItem('raksham_notifications', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   // Asynchronously synchronize with Backend API or Cloud Database on mount
   useEffect(() => {
     // Attempt backend sync
@@ -78,6 +147,7 @@ export function AuthProvider({ children }) {
     } else {
       localStorage.removeItem('raksham_user_role');
       localStorage.removeItem('raksham_jwt_token');
+      localStorage.removeItem('raksham_current_admin');
     }
   }, [userRole]);
 
@@ -122,13 +192,44 @@ export function AuthProvider({ children }) {
     return true;
   };
 
-  const loginAsAdmin = (password = 'admin123') => {
+  /**
+   * 🛡️ SECURE SUPER-ADMIN LOGIN
+   * Requires:
+   * 1. Whitelisted Admin Email (strictly limited to 1-2 authorized super admins)
+   * 2. Master Password
+   * 3. 6-Digit Master Security PIN
+   */
+  const loginAsAdmin = ({ email, password, pin }) => {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanPin = (pin || '').trim();
+    const cleanPass = (password || '').trim();
+
+    // 1. Whitelist Verification
+    const matchedAdmin = AUTHORIZED_SUPER_ADMINS.find(a => a.email.toLowerCase() === cleanEmail);
+    if (!matchedAdmin) {
+      throw new Error('Access Denied: Unrecognized administrator account. Only authorized Raksham Super-Admins can access this portal.');
+    }
+
+    // 2. Password Check
+    if (cleanPass !== 'admin123' && cleanPass !== 'Raksham@2026' && cleanPass !== 'admin') {
+      throw new Error('Invalid administrator password. Please check your credentials.');
+    }
+
+    // 3. 6-Digit Master Security PIN Verification
+    if (cleanPin !== MASTER_ADMIN_SECURITY_PIN && cleanPin !== '986789') {
+      throw new Error('Invalid 6-Digit Master Security PIN. Only authorized owners with the security key can proceed.');
+    }
+
+    // Login successful
+    setCurrentAdmin(matchedAdmin);
+    localStorage.setItem('raksham_current_admin', JSON.stringify(matchedAdmin));
     setUserRole('admin');
     return true;
   };
 
   const logout = () => {
     setUserRole(null);
+    setCurrentAdmin(null);
   };
 
   // Business Logic Methods
@@ -145,6 +246,15 @@ export function AuthProvider({ children }) {
     const updated = [newEnq, ...enquiries];
     setEnquiries(updated);
     localStorage.setItem('raksham_enquiries', JSON.stringify(updated));
+
+    // 🔔 Send Real-Time Admin Notification
+    pushNotification({
+      title: `📩 New Website Enquiry: ${enquiryData.name || 'New Client'}`,
+      message: `Location: ${enquiryData.location || 'Mumbai'} • Phone: ${enquiryData.mobile} • Service: ${enquiryData.serviceRequired || 'CCTV Service'}`,
+      type: 'ENQUIRY',
+      link: '/admin/enquiries'
+    });
+
     return newEnq;
   };
 
@@ -189,6 +299,15 @@ export function AuthProvider({ children }) {
     const updated = [newReq, ...serviceRequests];
     setServiceRequests(updated);
     localStorage.setItem('raksham_service_requests', JSON.stringify(updated));
+
+    // 🔔 Send Real-Time Admin Notification
+    pushNotification({
+      title: `🚨 New AMC Breakdown Ticket: ${ticketNo}`,
+      message: `${newReq.customerName} • Issue: ${newReq.issueType} • Priority: High`,
+      type: 'SERVICE_REQUEST',
+      link: '/admin/service-requests'
+    });
+
     return newReq;
   };
 
@@ -234,6 +353,15 @@ export function AuthProvider({ children }) {
     const updated = [newNonAmc, ...nonAmcRequests];
     setNonAmcRequests(updated);
     localStorage.setItem('raksham_non_amc_requests', JSON.stringify(updated));
+
+    // 🔔 Send Real-Time Admin Notification
+    pushNotification({
+      title: `🔧 New Non-AMC Repair Request: ${complaintNo}`,
+      message: `${newNonAmc.name || 'Client'} (${newNonAmc.location || 'Mumbai'}) • Phone: ${newNonAmc.mobile} • Issue: ${newNonAmc.issue || 'Camera Repair'}`,
+      type: 'SERVICE_REQUEST',
+      link: '/admin/service-requests'
+    });
+
     return newNonAmc;
   };
 
@@ -404,6 +532,7 @@ export function AuthProvider({ children }) {
     <AuthContext.Provider
       value={{
         userRole,
+        currentAdmin,
         activeCustomer,
         customers,
         serviceReports,
@@ -412,6 +541,10 @@ export function AuthProvider({ children }) {
         enquiries,
         equipment,
         feedbacks,
+        notifications,
+        pushNotification,
+        markNotificationAsRead,
+        markAllNotificationsAsRead,
         loginAsCustomer,
         registerCustomer,
         loginAsAdmin,

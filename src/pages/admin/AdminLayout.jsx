@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
@@ -11,14 +11,19 @@ import {
   ShieldCheck, 
   LogOut,
   ChevronRight,
-  PhoneCall
+  PhoneCall,
+  Bell,
+  CheckCheck,
+  ShieldAlert,
+  ExternalLink
 } from 'lucide-react';
 import { COMPANY_INFO } from '../../data/websiteData';
 
 export default function AdminLayout() {
-  const { logout, enquiries, serviceRequests } = useAuth();
+  const { logout, enquiries, serviceRequests, notifications, markNotificationAsRead, markAllNotificationsAsRead, currentAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const [showNotifs, setShowNotifs] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -27,6 +32,7 @@ export default function AdminLayout() {
 
   const pendingEnquiriesCount = enquiries.filter(e => e.status === 'New').length;
   const pendingTicketsCount = serviceRequests.filter(r => r.status !== 'Completed').length;
+  const unreadNotifsCount = (notifications || []).filter(n => !n.isRead).length;
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
@@ -53,17 +59,89 @@ export default function AdminLayout() {
               />
             </div>
             <div>
-              <span className="text-[10px] font-mono text-gold-400 uppercase font-bold tracking-wider">Operations & Admin Portal</span>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-mono text-gold-400 uppercase font-bold tracking-wider">Operations & Admin Portal</span>
+                <span className="text-[9px] font-extrabold bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                  🛡️ Super-Admin Verified
+                </span>
+              </div>
               <h1 className="text-xl sm:text-2xl font-bold text-white">
-                {COMPANY_INFO.name} — Management Desk
+                {COMPANY_INFO.name} — Command Desk
               </h1>
               <p className="text-xs text-slate-400">
-                Surveillance Operations • Mumbai & Navi Mumbai Service Command
+                Authorized Session: <strong className="text-slate-200">{currentAdmin?.name || 'Master Super-Admin'}</strong> ({currentAdmin?.email || 'admin@raksham.com'})
               </p>
             </div>
           </div>
 
           <div className="flex items-center space-x-3">
+            
+            {/* 🔔 Real-time Admin Notification Bell */}
+            <div className="relative">
+              <button 
+                onClick={() => setShowNotifs(!showNotifs)}
+                className="relative p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-gold-400 border border-slate-700 transition-colors flex items-center justify-center cursor-pointer shadow-xs"
+                title="Customer Inquiries & Service Alerts"
+              >
+                <Bell className="w-4 h-4" />
+                {unreadNotifsCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 text-white font-black text-[10px] rounded-full flex items-center justify-center animate-pulse border-2 border-slate-900">
+                    {unreadNotifsCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notification Dropdown Tray */}
+              {showNotifs && (
+                <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white text-slate-900 rounded-2xl shadow-2xl border border-slate-200 z-50 overflow-hidden animate-fadeIn">
+                  <div className="p-3.5 bg-slate-900 text-white flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Bell className="w-4 h-4 text-gold-400" />
+                      <span className="text-xs font-bold">Real-Time Customer Alerts ({unreadNotifsCount} New)</span>
+                    </div>
+                    {unreadNotifsCount > 0 && (
+                      <button 
+                        onClick={markAllNotificationsAsRead}
+                        className="text-[10px] text-gold-400 hover:underline font-semibold cursor-pointer"
+                      >
+                        Mark all read
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
+                    {(!notifications || notifications.length === 0) ? (
+                      <div className="p-6 text-center text-xs text-slate-500">
+                        No recent notifications.
+                      </div>
+                    ) : (
+                      notifications.slice(0, 10).map((notif) => (
+                        <div 
+                          key={notif.id}
+                          onClick={() => {
+                            markNotificationAsRead(notif.id);
+                            if (notif.link) {
+                              navigate(notif.link);
+                              setShowNotifs(false);
+                            }
+                          }}
+                          className={`p-3.5 text-xs space-y-1 hover:bg-slate-50 cursor-pointer transition-colors ${
+                            !notif.isRead ? 'bg-amber-50/70 border-l-4 border-gold-500 font-medium' : ''
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-bold text-slate-900 text-[11px] truncate">{notif.title}</span>
+                            <span className="text-[9px] text-slate-400 flex-shrink-0">{notif.time}</span>
+                          </div>
+                          <p className="text-[11px] text-slate-600 leading-tight">{notif.message}</p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Link
               to="/admin/create-report"
               className="px-4 py-2 rounded-xl bg-gold-500 hover:bg-gold-600 text-white font-bold text-xs shadow-gold-soft flex items-center space-x-1.5 transition-all"
@@ -74,7 +152,7 @@ export default function AdminLayout() {
 
             <button
               onClick={handleLogout}
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 flex items-center space-x-1.5 transition-colors"
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 flex items-center space-x-1.5 transition-colors cursor-pointer"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Logout</span>
@@ -117,8 +195,22 @@ export default function AdminLayout() {
               );
             })}
 
-            <div className="pt-4 mt-4 border-t border-slate-100 p-2 text-xs space-y-1">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lead Technician</span>
+            <div className="pt-4 mt-4 border-t border-slate-100 p-2.5 text-xs space-y-2 bg-slate-50 rounded-2xl border border-slate-200/60">
+              <div className="flex items-center space-x-1.5 text-emerald-700 font-extrabold text-[10px] uppercase tracking-wider">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Super-Admin Whitelist Active</span>
+              </div>
+              <div>
+                <p className="font-bold text-slate-900 text-xs">{currentAdmin?.name || 'Master Super-Admin'}</p>
+                <span className="text-[10px] text-slate-500 block truncate">{currentAdmin?.email || 'admin@raksham.com'}</span>
+              </div>
+              <div className="text-[9px] text-slate-500 font-mono pt-1 border-t border-slate-200">
+                🔒 2FA Master PIN Protected
+              </div>
+            </div>
+
+            <div className="p-2 text-xs space-y-1">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Lead Technician Hub</span>
               <p className="font-bold text-slate-900">Rakesh Toraskar</p>
               <span className="text-[11px] text-slate-500 block">📞 +91 90291 14205</span>
             </div>

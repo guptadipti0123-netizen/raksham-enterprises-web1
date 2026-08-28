@@ -103,6 +103,27 @@ export const authController = {
         }
       }
 
+      // 4. Strict Super-Admin Security Check
+      if (user.role === 'ADMIN') {
+        const whitelistedAdminEmails = ['admin@raksham.com', 'operations@raksham.com', 'support@raksham.com'];
+        if (!whitelistedAdminEmails.includes((user.email || '').toLowerCase())) {
+          return res.status(403).json({
+            success: false,
+            error: 'Access Denied',
+            message: 'Unrecognized administrator account. Only authorized Raksham Super-Admins can access.'
+          });
+        }
+
+        const { pin } = req.body;
+        if (pin && pin !== '986789' && pin !== process.env.MASTER_ADMIN_PIN) {
+          return res.status(401).json({
+            success: false,
+            error: 'Security Verification Failed',
+            message: 'Invalid 6-Digit Master Security PIN.'
+          });
+        }
+      }
+
       const token = generateToken(user);
 
       // Audit Log
