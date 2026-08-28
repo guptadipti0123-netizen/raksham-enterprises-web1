@@ -30,7 +30,6 @@ import {
   FileText
 } from 'lucide-react';
 import IconRenderer from '../components/IconRenderer';
-import SocialMediaFollow from '../components/SocialMediaFollow';
 
 export default function HomePage({ onOpenQuote }) {
   const { addEnquiry } = useAuth();
@@ -637,9 +636,6 @@ export default function HomePage({ onOpenQuote }) {
           </form>
         </div>
       </section>
-
-      {/* 9. FOLLOW US ON SOCIAL MEDIA SECTION */}
-      <SocialMediaFollow />
 
     </div>
   );
