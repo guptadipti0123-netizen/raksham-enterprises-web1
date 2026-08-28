@@ -6,8 +6,8 @@ export const COMPANY_INFO = {
   phoneRaw: "919867890606",
   supportPhone: "+91 90291 14205",
   supportPhoneRaw: "919029114205",
-  email: "info@raksham.com", // General Website Inquiries
-  supportEmail: "Support@raksham.com", // Service & Support Desk
+  email: "Support@raksham.com",
+  supportEmail: "Support@raksham.com",
   address: "Plot no.165, Sector 24, Ulwe, Navi Mumbai & Mumbai Hubs, Maharashtra 410206",
   city: "Mumbai",
   experienceYears: "15+",
@@ -16,6 +16,45 @@ export const COMPANY_INFO = {
   heroHeading: "CCTV & Security System Solutions in Mumbai",
   heroSubheading: "Professional CCTV installation, repair, AMC and complete electronic security solutions for homes, offices, shops, societies and commercial properties.",
 };
+
+export const SOCIAL_MEDIA_LINKS = [
+  {
+    name: "Instagram",
+    url: "https://www.instagram.com/rakshamenterprises/?hl=en",
+    icon: "instagram",
+    color: "hover:bg-gradient-to-tr hover:from-amber-500 hover:via-rose-500 hover:to-purple-600"
+  },
+  {
+    name: "LinkedIn",
+    url: "https://www.linkedin.com/company/raksham-enterprises/",
+    icon: "linkedin",
+    color: "hover:bg-[#0077b5]"
+  },
+  {
+    name: "Facebook",
+    url: "https://www.facebook.com/raksham.group/",
+    icon: "facebook",
+    color: "hover:bg-[#1877f2]"
+  },
+  {
+    name: "YouTube",
+    url: "https://www.youtube.com/@rakshamenterprises",
+    icon: "youtube",
+    color: "hover:bg-[#ff0000]"
+  },
+  {
+    name: "X (Twitter)",
+    url: "https://x.com/Rakshament",
+    icon: "x",
+    color: "hover:bg-black"
+  },
+  {
+    name: "Email Support",
+    url: "mailto:Support@raksham.com",
+    icon: "mail",
+    color: "hover:bg-amber-600"
+  }
+];
 
 export const USP_CARDS = [
   {

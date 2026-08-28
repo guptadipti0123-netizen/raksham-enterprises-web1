@@ -12,6 +12,7 @@ import {
   ChevronDown, 
   HelpCircle 
 } from 'lucide-react';
+import SocialMediaFollow from '../components/SocialMediaFollow';
 
 export default function ContactPage() {
   const [openFaqIdx, setOpenFaqIdx] = useState(0);
@@ -307,6 +308,9 @@ export default function ContactPage() {
           </div>
         </div>
       </section>
+
+      {/* Social Media Follow Section */}
+      <SocialMediaFollow />
 
       {/* Embedded FAQs Accordion Section */}
       <section className="py-16 bg-slate-50 border-t border-slate-200">

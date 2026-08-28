@@ -30,6 +30,7 @@ import {
   FileText
 } from 'lucide-react';
 import IconRenderer from '../components/IconRenderer';
+import SocialMediaFollow from '../components/SocialMediaFollow';
 
 export default function HomePage({ onOpenQuote }) {
   const { addEnquiry } = useAuth();
@@ -412,55 +413,6 @@ export default function HomePage({ onOpenQuote }) {
         </div>
       </section>
 
-      {/* 5. FEATURED PROJECT & CASE STUDY TEASER */}
-      <section className="py-14 bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div>
-              <span className="text-[11px] font-bold text-gold-700 uppercase tracking-wider block mb-1">Our Track Record</span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                Featured Projects & Case Studies
-              </h2>
-            </div>
-            <Link
-              to="/projects"
-              className="inline-flex items-center space-x-1 text-xs font-bold text-gold-700 hover:underline"
-            >
-              <span>View All Projects & Sectors →</span>
-            </Link>
-          </div>
-
-          {/* Featured Single Case Study Card */}
-          <div className="p-6 sm:p-8 rounded-3xl bg-slate-50 border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            <div className="md:col-span-2 space-y-3">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gold-800 bg-gold-100 px-2.5 py-0.5 rounded">
-                Case Study • Residential Society AMC
-              </span>
-              <h3 className="text-lg sm:text-xl font-bold text-slate-900">
-                Silver Springs Residency, Sector 24, Ulwe
-              </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Complete deployment of 14 Full HD IP cameras, 16-channel NVR with 4TB surveillance HDD, lift cabin cabling, and comprehensive quarterly AMC ensuring 100% perimeter uptime.
-              </p>
-              <div className="flex flex-wrap gap-2 pt-1 text-[11px] font-semibold text-slate-700">
-                <span className="bg-white px-2.5 py-1 rounded-md border border-slate-200">14 Cameras</span>
-                <span className="bg-white px-2.5 py-1 rounded-md border border-slate-200">Hikvision NVR</span>
-                <span className="bg-white px-2.5 py-1 rounded-md border border-slate-200">Active AMC Client</span>
-              </div>
-            </div>
-
-            <div className="text-center md:text-right">
-              <Link
-                to="/service-report"
-                className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs inline-flex items-center space-x-1.5 shadow-xs transition-colors"
-              >
-                <FileText className="w-3.5 h-3.5 text-gold-400" />
-                <span>View Sample Service Report (PDF 1)</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* 6. MUMBAI SERVICE HUBS & INTERACTIVE COVERAGE MAP */}
       <section className="py-14 bg-slate-50 border-b border-slate-200">
@@ -685,6 +637,9 @@ export default function HomePage({ onOpenQuote }) {
           </form>
         </div>
       </section>
+
+      {/* 9. FOLLOW US ON SOCIAL MEDIA SECTION */}
+      <SocialMediaFollow />
 
     </div>
   );
