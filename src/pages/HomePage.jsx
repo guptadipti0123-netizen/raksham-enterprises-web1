@@ -30,6 +30,9 @@ import {
   FileText
 } from 'lucide-react';
 import IconRenderer from '../components/IconRenderer';
+import HeroBannerSlider from '../components/HeroBannerSlider';
+import SecuritySolutionsSlider from '../components/SecuritySolutionsSlider';
+import ProjectsShowcase from '../components/ProjectsShowcase';
 
 export default function HomePage({ onOpenQuote }) {
   const { addEnquiry } = useAuth();
@@ -66,134 +69,8 @@ export default function HomePage({ onOpenQuote }) {
   return (
     <div className="bg-white">
       
-      {/* 1. HERO SECTION (Clean, Modern & High-Tech Security Backdrop) */}
-      <section className="relative pt-24 pb-14 sm:pt-36 sm:pb-24 md:pt-40 md:pb-28 bg-slate-950 text-white overflow-hidden">
-        
-        {/* Modern High-Tech Security Matrix Grid */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-40"
-          style={{
-            backgroundImage: `radial-gradient(rgba(217, 178, 86, 0.18) 1px, transparent 1px), radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px)`,
-            backgroundSize: '32px 32px, 16px 16px',
-            backgroundPosition: '0 0, 8px 8px'
-          }}
-        />
-
-        {/* Dynamic Ambient Glow Gradients (Deep Gold & Security Blue) */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 bg-gold-500/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 -right-32 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-gold-500/10 rounded-full blur-2xl pointer-events-none" />
-
-        {/* Subtle Tech Circuit Scan Lines */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/50 to-slate-950 pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            {/* Left Content */}
-            <div className="lg:col-span-8 space-y-4 sm:space-y-6 text-center lg:text-left">
-              
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
-                <ShieldCheck className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
-                <span>Security System Solution Provider – Mumbai</span>
-              </div>
-
-              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
-                CCTV & Security System <br className="hidden sm:block" />
-                <span className="text-gradient-gold">Solutions in Mumbai</span>
-              </h1>
-
-              <p className="text-xs sm:text-base md:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                {COMPANY_INFO.heroSubheading}
-              </p>
-
-              {/* CTAs */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 pt-1">
-                <button
-                  onClick={onOpenQuote}
-                  className="w-full sm:w-auto px-7 py-3.5 sm:py-4 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold text-xs sm:text-sm shadow-gold-soft transition-all flex items-center justify-center space-x-2"
-                >
-                  <span>Book Free Site Survey</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-
-                <Link
-                  to="/service-request"
-                  className="w-full sm:w-auto px-6 py-3.5 sm:py-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center space-x-2 border border-slate-700"
-                >
-                  <Wrench className="w-4 h-4 text-gold-400" />
-                  <span>Need Service / Repair?</span>
-                </Link>
-              </div>
-
-              {/* 4 Trust Stats Bar */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-6 border-t border-slate-800 text-slate-300 text-xs text-left">
-                <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
-                  <span className="font-semibold text-[11px] sm:text-xs">15+ Years Exp</span>
-                </div>
-                <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
-                  <span className="font-semibold text-[11px] sm:text-xs">24×7 Support</span>
-                </div>
-                <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
-                  <span className="font-semibold text-[11px] sm:text-xs">Mumbai Coverage</span>
-                </div>
-                <div className="flex items-center space-x-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-gold-400 flex-shrink-0" />
-                  <span className="font-semibold text-[11px] sm:text-xs">CCTV AMC Shield</span>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Right Brand Card */}
-            <div className="lg:col-span-4 hidden sm:block">
-              <div className="bg-slate-800/90 backdrop-blur-md rounded-2xl border border-slate-700 p-6 shadow-2xl text-center space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-white p-1 flex items-center justify-center mx-auto shadow-md">
-                  <img 
-                    src="/assets/logo-icon.jpg" 
-                    alt="Raksham Enterprises Logo" 
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                
-                <div>
-                  <h2 className="text-base font-bold text-white tracking-wide">
-                    <span className="text-gold-400">RAKSHAM</span> ENTERPRISES
-                  </h2>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-400 mt-0.5">
-                    Security System Solution Provider – Mumbai
-                  </p>
-                </div>
-
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Free site assessments, genuine warranty hardware, and official digital service reports.
-                </p>
-
-                <div className="space-y-2 pt-1">
-                  <Link
-                    to="/login"
-                    className="w-full py-2.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-bold text-xs shadow-gold-soft flex items-center justify-center space-x-1 transition-all"
-                  >
-                    <span>Customer & Admin Portal Login →</span>
-                  </Link>
-
-                  <Link
-                    to="/cctv-amc-mumbai"
-                    className="w-full py-2 rounded-xl bg-slate-700/80 hover:bg-slate-700 text-slate-200 font-semibold text-xs border border-slate-600 flex items-center justify-center space-x-1.5 transition-colors"
-                  >
-                    <ShieldCheck className="w-3.5 h-3.5 text-gold-400" />
-                    <span>View CCTV AMC Packages</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
+      {/* 1. HERO SECTION BANNER CAROUSEL (4 Branded High-Impact Slides) */}
+      <HeroBannerSlider onOpenQuote={onOpenQuote} />
 
       {/* 2. SERVICES TEASER (Compact 6-Card Grid with View All Link) */}
       <section className="py-14 bg-slate-50 border-b border-slate-200">
@@ -276,7 +153,10 @@ export default function HomePage({ onOpenQuote }) {
         </div>
       </section>
 
-      {/* 3. CCTV AMC HIGHLIGHT BANNER (Compact with direct calculator link) */}
+      {/* 3. INTERACTIVE HARDWARE & SECURITY SOLUTIONS IMAGE SLIDER */}
+      <SecuritySolutionsSlider onOpenQuote={onOpenQuote} />
+
+      {/* 4. CCTV AMC HIGHLIGHT BANNER (Compact with direct calculator link) */}
       <section className="py-14 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="p-6 sm:p-10 rounded-3xl bg-slate-900 text-white shadow-soft-lg grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative overflow-hidden">
@@ -327,7 +207,10 @@ export default function HomePage({ onOpenQuote }) {
         </div>
       </section>
 
-      {/* 4. SERVICE & COMPLAINT ROUTING HUB TEASER */}
+      {/* 5. VERIFIED CLIENT INSTALLATION CASE STUDIES & PROJECT SHOWCASE */}
+      <ProjectsShowcase onOpenQuote={onOpenQuote} onOpenReportDetail={() => {}} />
+
+      {/* 6. SERVICE & COMPLAINT ROUTING HUB TEASER */}
       <section className="py-14 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-1.5">

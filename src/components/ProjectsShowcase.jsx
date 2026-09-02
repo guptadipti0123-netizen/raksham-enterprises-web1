@@ -16,7 +16,8 @@ export default function ProjectsShowcase({ onOpenQuote, onOpenReportDetail }) {
       reportNo: "RE-20826-2",
       badge: "Verified Client Case Study",
       stats: { cameras: "14 Cams", storage: "30 Days Retention", uptime: "100%" },
-      highlight: true
+      highlight: true,
+      image: "/assets/banners/cctv-banner.png"
     },
     {
       id: "apex-corporate",
@@ -26,7 +27,8 @@ export default function ProjectsShowcase({ onOpenQuote, onOpenReportDetail }) {
       location: "Sakinaka, Andheri East, Mumbai",
       specs: "32 4K IP Cameras, 9U Server Rack Dressing & Biometric Access",
       desc: "Structured Cat6 network cabling, perimeter AI motion alert system, and centralized command desk with HDMI multi-display.",
-      stats: { cameras: "32 Cams", storage: "60 Days Retention", uptime: "99.9%" }
+      stats: { cameras: "32 Cams", storage: "60 Days Retention", uptime: "99.9%" },
+      image: "/assets/banners/biometric-banner.png"
     },
     {
       id: "royal-palms-society",
@@ -36,7 +38,8 @@ export default function ProjectsShowcase({ onOpenQuote, onOpenReportDetail }) {
       location: "Chembur, Mumbai",
       specs: "24 ColorVu Night Vision Cameras + Society EPABX Intercom",
       desc: "Upgraded legacy analog wiring to high-speed IP CCTV across 3 wings, guard cabin monitor, and secretary mobile streaming.",
-      stats: { cameras: "24 Cams", storage: "45 Days Retention", uptime: "100%" }
+      stats: { cameras: "24 Cams", storage: "45 Days Retention", uptime: "100%" },
+      image: "/assets/banners/vdp-banner.png"
     },
     {
       id: "city-retail-hub",
@@ -46,7 +49,8 @@ export default function ProjectsShowcase({ onOpenQuote, onOpenReportDetail }) {
       location: "Ghatkopar West, Mumbai",
       specs: "18 Ultra HD Wide-Angle Dome Cameras & Cash Desk Coverage",
       desc: "Anti-theft surveillance with crystal-clear 4K zooming over billing counters and customer entry turnstiles.",
-      stats: { cameras: "18 Cams", storage: "30 Days Retention", uptime: "99.8%" }
+      stats: { cameras: "18 Cams", storage: "30 Days Retention", uptime: "99.8%" },
+      image: "/assets/banners/cctv-banner.png"
     },
     {
       id: "st-xavier-academy",
@@ -56,7 +60,8 @@ export default function ProjectsShowcase({ onOpenQuote, onOpenReportDetail }) {
       location: "Powai, Mumbai",
       specs: "40 Cameras + Fire Alarm Smoke Sensors & PA Intercom",
       desc: "Safe campus surveillance covering playground, corridors, bus parking, and emergency staircase access.",
-      stats: { cameras: "40 Cams", storage: "60 Days Retention", uptime: "100%" }
+      stats: { cameras: "40 Cams", storage: "60 Days Retention", uptime: "100%" },
+      image: "/assets/banners/fire-safety-banner.png"
     },
     {
       id: "midc-warehouse",
@@ -66,7 +71,8 @@ export default function ProjectsShowcase({ onOpenQuote, onOpenReportDetail }) {
       location: "MIDC, Thane-Belapur Road",
       specs: "16 Long-Range Infrared Bullet Cameras + Perimeter Beams",
       desc: "Weatherproof IP67 industrial outdoor setup with night vision up to 80 meters and forklift zone safety monitoring.",
-      stats: { cameras: "16 Cams", storage: "90 Days Retention", uptime: "99.9%" }
+      stats: { cameras: "16 Cams", storage: "90 Days Retention", uptime: "99.9%" },
+      image: "/assets/banners/cctv-banner.png"
     }
   ];
 
@@ -131,9 +137,9 @@ export default function ProjectsShowcase({ onOpenQuote, onOpenReportDetail }) {
                   {/* Subtle CCTV Grid Graphic Background */}
                   <div className="absolute inset-0 bg-gradient-to-t from-obsidian-950 via-obsidian-900/60 to-transparent z-10" />
                   <div 
-                    className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500 opacity-60"
+                    className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500 opacity-85"
                     style={{
-                      backgroundImage: `url('/assets/logo-full.jpg')`,
+                      backgroundImage: `url('${proj.image || '/assets/logo-full.jpg'}')`,
                       backgroundPosition: 'center',
                       backgroundSize: 'cover'
                     }}
