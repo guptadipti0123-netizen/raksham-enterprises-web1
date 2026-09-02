@@ -144,7 +144,7 @@ export default function HeroBannerSlider({ onOpenQuote }) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {/* 1. FULL SCREEN / FULL WIDTH BANNER STAGE (BRIGHT & CLEAN WHITE THEME) */}
+      {/* 1. FULL SCREEN / FULL WIDTH BANNER STAGE (100% CLEAR ORIGINAL IMAGE) */}
       <div className="relative w-full h-[65vh] sm:h-[75vh] md:h-[82vh] lg:h-[88vh] min-h-[520px] max-h-[920px] bg-slate-100 overflow-hidden group">
         
         {SLIDES.map((slide, idx) => {
@@ -156,51 +156,47 @@ export default function HeroBannerSlider({ onOpenQuote }) {
                 isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
               }`}
             >
-              {/* Clean, Bright 4K Image (No Dark Filters, Natural Lighting) */}
+              {/* Clean, 100% Vibrant 4K Image - NO OVERLAY WASH */}
               <img
                 src={slide.image}
                 alt={slide.alt}
-                className="w-full h-full object-cover object-center bg-slate-100"
+                className="w-full h-full object-cover object-center"
                 loading={idx === 0 ? 'eager' : 'lazy'}
               />
 
-              {/* Soft White Gradient for crystal-clear readability without black shade */}
-              <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-t from-white/70 via-transparent to-transparent pointer-events-none" />
-
-              {/* Foreground Crisp Typography */}
-              <div className="absolute inset-0 z-20">
+              {/* Left-Aligned Floating Frosted Glass Card (Keeps image completely clear) */}
+              <div className="absolute inset-0 z-20 pointer-events-none">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
                   
-                  <div className="max-w-2xl space-y-3 sm:space-y-4 pt-4 sm:pt-0">
+                  <div className="max-w-lg lg:max-w-xl bg-white/88 backdrop-blur-md p-5 sm:p-7 md:p-8 rounded-3xl border border-white/90 shadow-[0_15px_40px_rgba(0,0,0,0.15)] space-y-3 sm:space-y-3.5 pointer-events-auto">
                     
                     {/* Badge */}
-                    <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-gold-50 border border-gold-300/80 backdrop-blur-md text-gold-800 text-xs font-extrabold uppercase tracking-wider shadow-2xs">
+                    <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-50 border border-gold-300 text-gold-800 text-[11px] sm:text-xs font-bold uppercase tracking-wider shadow-2xs">
                       <Sparkles className="w-3.5 h-3.5 text-gold-600" />
                       <span>{slide.badge}</span>
                     </div>
 
                     {/* Main Heading */}
-                    <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-950 leading-tight tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-950 leading-tight tracking-tight">
                       {slide.title}
                     </h1>
 
                     {/* Tagline */}
-                    <p className="text-xs sm:text-base md:text-lg font-extrabold text-gold-700">
+                    <p className="text-xs sm:text-sm md:text-base font-bold text-gold-700">
                       {slide.tagline}
                     </p>
 
                     {/* Description */}
-                    <p className="text-xs sm:text-sm md:text-base text-slate-700 font-medium leading-relaxed max-w-xl">
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed line-clamp-2 sm:line-clamp-3">
                       {slide.description}
                     </p>
 
                     {/* 4 Feature Bullet Pills */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 pb-2 max-w-lg">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1 pb-1">
                       {slide.features.map((feature, fIdx) => (
                         <div 
                           key={fIdx}
-                          className="flex items-center space-x-2 bg-white/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-slate-200/90 text-[11px] sm:text-xs text-slate-800 font-semibold shadow-2xs"
+                          className="flex items-center space-x-1.5 bg-slate-50/90 px-2.5 py-1 rounded-lg border border-slate-200/80 text-[11px] sm:text-xs text-slate-800 font-semibold"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                           <span className="truncate">{feature}</span>
@@ -209,11 +205,11 @@ export default function HeroBannerSlider({ onOpenQuote }) {
                     </div>
 
                     {/* CTA Action Buttons */}
-                    <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <div className="flex flex-wrap items-center gap-2.5 pt-1.5">
                       <button
                         type="button"
                         onClick={onOpenQuote}
-                        className="px-6 sm:px-8 py-3 sm:py-4 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-black text-xs sm:text-sm shadow-gold-soft transition-all transform hover:-translate-y-0.5 flex items-center space-x-2 cursor-pointer"
+                        className="px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-gold-soft transition-all transform hover:-translate-y-0.5 flex items-center space-x-1.5 cursor-pointer"
                       >
                         <span>{slide.primaryCta}</span>
                         <ArrowRight className="w-4 h-4" />
@@ -221,7 +217,7 @@ export default function HeroBannerSlider({ onOpenQuote }) {
 
                       <Link
                         to={slide.secondaryLink}
-                        className="px-5 sm:px-6 py-3 sm:py-4 rounded-xl bg-white hover:bg-slate-50 text-slate-900 font-bold text-xs sm:text-sm border border-slate-300 backdrop-blur-md shadow-sm transition-colors inline-flex items-center space-x-1.5"
+                        className="px-4 sm:px-5 py-2.5 sm:py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm border border-slate-300 shadow-2xs transition-colors inline-flex items-center space-x-1"
                       >
                         <span>{slide.secondaryCta}</span>
                       </Link>
@@ -278,7 +274,7 @@ export default function HeroBannerSlider({ onOpenQuote }) {
 
       </div>
 
-      {/* 2. FULL WIDTH BOTTOM TRUST HIGHLIGHTS BAR (BRIGHT WHITE/SLATE THEME) */}
+      {/* 2. FULL WIDTH BOTTOM TRUST HIGHLIGHTS BAR */}
       <div className="w-full bg-slate-50 border-t border-b border-slate-200 py-4 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs text-slate-700">
           <div className="flex items-center space-x-2.5 p-2.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs">
