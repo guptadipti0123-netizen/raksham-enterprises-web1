@@ -73,10 +73,6 @@ export default function CctvAmcPage({ onOpenQuote }) {
       {/* Page Header */}
       <section className="bg-slate-50 py-12 md:py-16 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-gold-50 border border-gold-200 text-gold-800 text-xs font-semibold">
-            <Wrench className="w-4 h-4 text-gold-600" />
-            <span>Annual Maintenance Contracts</span>
-          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">
             Professional <span className="text-gradient-gold">CCTV AMC Services</span> in Mumbai
           </h1>
@@ -90,7 +86,6 @@ export default function CctvAmcPage({ onOpenQuote }) {
       <section className="py-16 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-10 space-y-1">
-            <span className="text-xs font-bold text-gold-700 uppercase tracking-wider">Quality Protocol</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
               Our 11-Point Preventive Inspection Checklist
             </h2>
@@ -127,10 +122,6 @@ export default function CctvAmcPage({ onOpenQuote }) {
               {/* Left Controls */}
               <div className="lg:col-span-7 space-y-6">
                 <div>
-                  <div className="inline-flex items-center space-x-1.5 text-gold-700 text-xs font-bold uppercase tracking-wider mb-1">
-                    <Calculator className="w-4 h-4" />
-                    <span>Instant Price Calculator</span>
-                  </div>
                   <h3 className="text-2xl font-extrabold text-slate-900">
                     Estimate Your CCTV AMC Package
                   </h3>

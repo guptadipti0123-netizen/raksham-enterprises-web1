@@ -78,7 +78,6 @@ export default function HomePage({ onOpenQuote }) {
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <span className="text-[11px] font-bold text-gold-700 uppercase tracking-wider block mb-1">Our Core Services</span>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
                 Security & Surveillance Services
               </h2>
@@ -108,9 +107,6 @@ export default function HomePage({ onOpenQuote }) {
                     <div className="w-10 h-10 rounded-xl bg-gold-50 border border-gold-200 flex items-center justify-center text-gold-700 group-hover:bg-gold-500 group-hover:text-white transition-colors">
                       <IconRenderer name={serv.icon} className="w-5 h-5" />
                     </div>
-                    <span className="text-[11px] font-mono font-bold text-slate-400">
-                      {serv.code}
-                    </span>
                   </div>
 
                   <h3 className="text-sm font-bold text-slate-900 group-hover:text-gold-700 transition-colors mb-1">
@@ -163,9 +159,6 @@ export default function HomePage({ onOpenQuote }) {
             <div className="absolute top-0 right-0 w-64 h-64 bg-gold-500/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="lg:col-span-8 space-y-3 relative z-10">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-gold-400 bg-gold-500/10 px-2.5 py-0.5 rounded border border-gold-500/30">
-                Annual Maintenance Protection
-              </span>
               <h2 className="text-xl sm:text-3xl font-extrabold text-white">
                 CCTV AMC Contracts for Societies & Offices in Mumbai
               </h2>
@@ -214,7 +207,6 @@ export default function HomePage({ onOpenQuote }) {
       <section className="py-14 bg-slate-50 border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-1.5">
-            <span className="text-[11px] font-bold text-gold-700 uppercase tracking-wider">Fast Service Dispatch</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
               Need CCTV Service or Camera Repair?
             </h2>
@@ -303,10 +295,6 @@ export default function HomePage({ onOpenQuote }) {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-50 border border-gold-200 text-gold-800 text-[11px] font-bold uppercase tracking-wider mb-1.5">
-                <MapPin className="w-3.5 h-3.5 text-gold-600" />
-                <span>Local Mumbai Coverage Network</span>
-              </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
                 Fast Technician Dispatch Across Mumbai
               </h2>
@@ -434,7 +422,6 @@ export default function HomePage({ onOpenQuote }) {
       <section className="py-14 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center space-y-1.5">
-            <span className="text-[11px] font-bold text-gold-700 uppercase tracking-wider">Get In Touch</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
               Book a Free On-Site Consultation
             </h2>

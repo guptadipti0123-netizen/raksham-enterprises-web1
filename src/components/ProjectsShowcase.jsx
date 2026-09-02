@@ -93,11 +93,6 @@ export default function ProjectsShowcase({ onOpenQuote, onOpenReportDetail }) {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-2">
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-50 border border-gold-300 text-gold-800 text-[11px] font-bold uppercase tracking-wider shadow-2xs">
-            <Building className="w-3.5 h-3.5 text-gold-600" />
-            <span>Proven Track Record</span>
-          </div>
-
           <h2 className="text-2xl sm:text-3xl font-black text-slate-950 tracking-tight">
             Featured Projects & Implementations
           </h2>

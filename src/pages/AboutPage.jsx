@@ -11,10 +11,6 @@ export default function AboutPage({ onOpenQuote }) {
       {/* Page Header */}
       <section className="bg-slate-50 py-12 md:py-16 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-gold-50 border border-gold-200 text-gold-800 text-xs font-semibold">
-            <ShieldCheck className="w-4 h-4 text-gold-600" />
-            <span>Company Background & Expertise</span>
-          </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">
             About <span className="text-gradient-gold">Raksham Enterprises</span>
           </h1>
@@ -104,7 +100,6 @@ export default function AboutPage({ onOpenQuote }) {
       <section className="py-16 bg-slate-50 border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-            <span className="text-xs font-bold text-gold-700 uppercase tracking-wider">Client Coverage</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
               Sectors & Industries We Protect
             </h2>
@@ -134,7 +129,6 @@ export default function AboutPage({ onOpenQuote }) {
       <section className="py-16 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-            <span className="text-xs font-bold text-gold-700 uppercase tracking-wider">Our Standards</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
               Why Choose Raksham Enterprises?
             </h2>
@@ -161,7 +155,6 @@ export default function AboutPage({ onOpenQuote }) {
       <section className="py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12 space-y-2">
-            <span className="text-xs font-bold text-gold-700 uppercase tracking-wider">How We Work</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
               Our 5-Step Service Process
             </h2>

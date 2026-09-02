@@ -170,12 +170,6 @@ export default function HeroBannerSlider({ onOpenQuote }) {
                   
                   <div className="max-w-lg lg:max-w-xl bg-white/98 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl border border-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] space-y-3 sm:space-y-4 pointer-events-auto">
                     
-                    {/* Badge */}
-                    <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-50 border border-gold-400 text-gold-900 text-[11px] sm:text-xs font-black uppercase tracking-wider shadow-2xs">
-                      <Sparkles className="w-3.5 h-3.5 text-gold-700" />
-                      <span>{slide.badge}</span>
-                    </div>
-
                     {/* Main Heading */}
                     <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-950 leading-tight tracking-tight">
                       {slide.title}

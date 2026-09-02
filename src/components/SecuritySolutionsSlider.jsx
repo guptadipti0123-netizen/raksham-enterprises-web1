@@ -77,11 +77,6 @@ export default function SecuritySolutionsSlider({ onOpenQuote }) {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto space-y-2">
-          <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-[11px] font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-gold-400" />
-            <span>Security Hardware Range</span>
-          </div>
-
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight">
             Featured Security Systems & Hardware
           </h2>

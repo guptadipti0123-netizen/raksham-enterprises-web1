@@ -82,10 +82,6 @@ export default function CctvAmcSection({ onOpenQuote }) {
         
         {/* Section Header from PDF */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-xs font-semibold uppercase tracking-wider">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>High-Reliability Surveillance Protection</span>
-          </div>
           <h2 className="text-2xl sm:text-3xl md:text-5xl font-extrabold text-white">
             Professional <span className="text-gradient-gold">CCTV AMC Services</span> in Mumbai
           </h2>
