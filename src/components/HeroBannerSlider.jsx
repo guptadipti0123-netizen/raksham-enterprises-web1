@@ -164,30 +164,30 @@ export default function HeroBannerSlider({ onOpenQuote }) {
                 loading={idx === 0 ? 'eager' : 'lazy'}
               />
 
-              {/* Left-Aligned Floating Frosted Glass Card (Keeps image completely clear) */}
+              {/* Left-Aligned Floating High-Contrast Card */}
               <div className="absolute inset-0 z-20 pointer-events-none">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
                   
-                  <div className="max-w-lg lg:max-w-xl bg-white/88 backdrop-blur-md p-5 sm:p-7 md:p-8 rounded-3xl border border-white/90 shadow-[0_15px_40px_rgba(0,0,0,0.15)] space-y-3 sm:space-y-3.5 pointer-events-auto">
+                  <div className="max-w-lg lg:max-w-xl bg-white/98 backdrop-blur-2xl p-6 sm:p-8 rounded-3xl border border-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] space-y-3 sm:space-y-4 pointer-events-auto">
                     
                     {/* Badge */}
-                    <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-50 border border-gold-300 text-gold-800 text-[11px] sm:text-xs font-bold uppercase tracking-wider shadow-2xs">
-                      <Sparkles className="w-3.5 h-3.5 text-gold-600" />
+                    <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-gold-50 border border-gold-400 text-gold-900 text-[11px] sm:text-xs font-black uppercase tracking-wider shadow-2xs">
+                      <Sparkles className="w-3.5 h-3.5 text-gold-700" />
                       <span>{slide.badge}</span>
                     </div>
 
                     {/* Main Heading */}
-                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-950 leading-tight tracking-tight">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-950 leading-tight tracking-tight">
                       {slide.title}
                     </h1>
 
                     {/* Tagline */}
-                    <p className="text-xs sm:text-sm md:text-base font-bold text-gold-700">
+                    <p className="text-xs sm:text-sm md:text-base font-black text-gold-800">
                       {slide.tagline}
                     </p>
 
                     {/* Description */}
-                    <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed line-clamp-2 sm:line-clamp-3">
+                    <p className="text-xs sm:text-sm md:text-base text-slate-800 font-semibold leading-relaxed line-clamp-2 sm:line-clamp-3">
                       {slide.description}
                     </p>
 
@@ -196,7 +196,7 @@ export default function HeroBannerSlider({ onOpenQuote }) {
                       {slide.features.map((feature, fIdx) => (
                         <div 
                           key={fIdx}
-                          className="flex items-center space-x-1.5 bg-slate-50/90 px-2.5 py-1 rounded-lg border border-slate-200/80 text-[11px] sm:text-xs text-slate-800 font-semibold"
+                          className="flex items-center space-x-1.5 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200/90 text-[11px] sm:text-xs text-slate-950 font-bold shadow-2xs"
                         >
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
                           <span className="truncate">{feature}</span>
@@ -209,7 +209,7 @@ export default function HeroBannerSlider({ onOpenQuote }) {
                       <button
                         type="button"
                         onClick={onOpenQuote}
-                        className="px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-gold-soft transition-all transform hover:-translate-y-0.5 flex items-center space-x-1.5 cursor-pointer"
+                        className="px-5 sm:px-7 py-2.5 sm:py-3.5 rounded-xl bg-gold-500 hover:bg-gold-400 text-slate-950 font-black text-xs sm:text-sm shadow-gold-soft transition-all transform hover:-translate-y-0.5 flex items-center space-x-1.5 cursor-pointer"
                       >
                         <span>{slide.primaryCta}</span>
                         <ArrowRight className="w-4 h-4" />
@@ -217,7 +217,7 @@ export default function HeroBannerSlider({ onOpenQuote }) {
 
                       <Link
                         to={slide.secondaryLink}
-                        className="px-4 sm:px-5 py-2.5 sm:py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm border border-slate-300 shadow-2xs transition-colors inline-flex items-center space-x-1"
+                        className="px-4 sm:px-5 py-2.5 sm:py-3.5 rounded-xl bg-white hover:bg-slate-100 text-slate-950 font-bold text-xs sm:text-sm border border-slate-300 shadow-2xs transition-colors inline-flex items-center space-x-1"
                       >
                         <span>{slide.secondaryCta}</span>
                       </Link>
