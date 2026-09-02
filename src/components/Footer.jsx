@@ -259,20 +259,6 @@ export default function Footer({ onOpenQuote }) {
           </div>
         </div>
 
-        {/* Local SEO Service Areas Links */}
-        <div className="pt-6 border-t border-slate-800 space-y-2">
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-            Popular CCTV & Security Search Locations in Mumbai:
-          </p>
-          <div className="flex flex-wrap gap-2 text-[11px] text-slate-500">
-            {MUMBAI_LOCATIONS.map((loc, idx) => (
-              <Link key={loc.name} to={`/service-areas/${loc.id}`} className="hover:text-gold-400">
-                CCTV Services in {loc.name} {idx < MUMBAI_LOCATIONS.length - 1 ? '•' : ''}
-              </Link>
-            ))}
-          </div>
-        </div>
-
         {/* Bottom Copyright */}
         <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} <strong className="text-slate-300">Raksham Enterprises</strong>. All Rights Reserved.</p>
