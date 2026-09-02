@@ -232,44 +232,47 @@ export default function HeroBannerSlider({ onOpenQuote }) {
           );
         })}
 
-        {/* Left Navigation Arrow */}
-        <button
-          type="button"
-          onClick={prevSlide}
-          aria-label="Previous Slide"
-          className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white/90 hover:bg-gold-500 text-slate-800 hover:text-slate-950 border border-slate-300/90 hover:border-gold-400 flex items-center justify-center backdrop-blur-md transition-all shadow-lg hover:scale-110 active:scale-95 cursor-pointer"
-        >
-          <ChevronLeft className="w-6 h-6 sm:w-7 sm:h-7" />
-        </button>
+        {/* Bottom-Right Corner Unified Navigation Controls */}
+        <div className="absolute bottom-4 sm:bottom-6 right-4 sm:right-8 z-30 flex items-center space-x-2 bg-white/95 backdrop-blur-md p-1.5 sm:p-2 rounded-2xl border border-slate-300 shadow-xl text-slate-800 pointer-events-auto">
+          {/* Previous Arrow */}
+          <button
+            type="button"
+            onClick={prevSlide}
+            aria-label="Previous Slide"
+            className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-slate-100 hover:bg-gold-500 text-slate-800 hover:text-slate-950 transition-all flex items-center justify-center active:scale-95 cursor-pointer shadow-2xs"
+          >
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
 
-        {/* Right Navigation Arrow */}
-        <button
-          type="button"
-          onClick={nextSlide}
-          aria-label="Next Slide"
-          className="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white/90 hover:bg-gold-500 text-slate-800 hover:text-slate-950 border border-slate-300/90 hover:border-gold-400 flex items-center justify-center backdrop-blur-md transition-all shadow-lg hover:scale-110 active:scale-95 cursor-pointer"
-        >
-          <ChevronRight className="w-6 h-6 sm:w-7 sm:h-7" />
-        </button>
+          {/* Indicator Dots & Counter */}
+          <div className="flex items-center space-x-1.5 px-2">
+            {SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => goToSlide(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  idx === currentSlide 
+                    ? 'w-7 bg-gold-500 shadow-2xs' 
+                    : 'w-2 bg-slate-300 hover:bg-slate-400'
+                }`}
+              />
+            ))}
+            <span className="text-[11px] font-mono font-bold text-slate-700 ml-1.5">
+              0{currentSlide + 1}/0{SLIDES.length}
+            </span>
+          </div>
 
-        {/* Slide Indicator Dots Floating Bottom Center */}
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-30 flex items-center space-x-2 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full border border-slate-300 shadow-md text-slate-700">
-          {SLIDES.map((_, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => goToSlide(idx)}
-              aria-label={`Go to slide ${idx + 1}`}
-              className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                idx === currentSlide 
-                  ? 'w-8 bg-gold-500 shadow-2xs' 
-                  : 'w-2.5 bg-slate-300 hover:bg-slate-400'
-              }`}
-            />
-          ))}
-          <span className="text-[11px] font-mono font-bold text-slate-700 ml-2">
-            0{currentSlide + 1}/0{SLIDES.length}
-          </span>
+          {/* Next Arrow */}
+          <button
+            type="button"
+            onClick={nextSlide}
+            aria-label="Next Slide"
+            className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-slate-100 hover:bg-gold-500 text-slate-800 hover:text-slate-950 transition-all flex items-center justify-center active:scale-95 cursor-pointer shadow-2xs"
+          >
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
         </div>
 
       </div>
